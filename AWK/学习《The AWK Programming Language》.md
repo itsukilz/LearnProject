@@ -5,8 +5,8 @@ notebook: AAAA
 ---
 
 ## 阅读顺序
-CP1 是 tutorial，教你怎么写aw
-CP2 是 语言语法介
+CP1 是 tutorial，教你怎么写awk
+CP2 是 语言语法介绍
 余下是awk各种应用
 
 ## 进度记录
@@ -26,19 +26,42 @@ CP2 是 语言语法介
 
 ### 1.1 Getting Started
 emp.data里储存了三列数据，姓名，每小时工资，工作小时数
-Beth 4.00 0Dan 3.75 0Kathy 4.00 10Mark 5.00 20Mary 5.50 22Susie 4.25 1
+
+Beth 4.00 0
+
+Dan 3.75 0
+
+Kathy 4.00 10
+
+Mark 5.00 20
+
+Mary 5.50 22
+
+Susie 4.25 1
 
 #### 第一个awk程序
 
-  * 统计所有工作小时大于0的人的工资`awk '$3>0 { print $1, $2*$3 } emp.data'`结果：Kathy 40Mark 100Mary 121Susie 76.
+  * 统计所有工作小时大于0的人的工资
 
+  `awk '$3>0 { print $1, $2*$3 } emp.data'`
+
+  结果：
+
+```
+Kathy 40
+Mark 100
+Mary 121
+Susie 76.
+```
   * awk告诉system to run awk， ''之间是可执行的awk程序 , emp.data是input file.
   * 程序是`pattern {action} statement`： 对每一行匹配$3>0这个pattern, 匹配上就执行{}中的action。
   * 统计工作小时为0的人的姓名`awk '$3 == 0 {print $1 }' emp.data`
 
 #### 注意
 
-  * 可以有多个input files假设有一个文件emp2.data
+  * 可以有多个input files
+
+假设有一个文件 emp2.data
  
 ```
 Danny 4.00 0
@@ -122,6 +145,7 @@ length(string),length 可以处理一整行 length($0
 语法和C语言完全一致，可以通用，且 只能用于action
 
   * if-else统计所有时薪大于$6的员工的数量，输出总工资和平均工资。如果n=0，平均工资无法计算（总工资计算也无意义），所以需要条件判断一下
+
 ```
 $2 > 6 {n = n +1 ; pay = pay + $2 * $3}
 
@@ -138,8 +162,11 @@ print "no employees are paid more than $6/hour"
 }
 ```
 
-  * while 新数据：amount rate year,每一年总金额为 amount*(1+rate)^year,求每一行每一年的总金
-这个程序是目前为止最像C语言程序的一个了，注意整个{}里是action, action里有n行，依次执行命
+  * while 
+
+新数据：amount rate year,每一年总金额为 amount*(1+rate)^year,求每一行每一年的总金额
+这个程序是目前为止最像C语言程序的一个了，注意整个{}里是action, action里有n行，依次执行命令
+
 ```
 { i = 1 #初始化变量
 
@@ -158,12 +185,10 @@ i = i+1
 }
 ```
 
-  * for 用for重写上面计算总金额的程
+  * for 用for重写上面计算总金额的程序
+
 ```
 { print $0 #打印原始行
-
-  
-
 
 # i为年，当i小于总年数的时候，算总金额，并让i递增
 
@@ -181,6 +206,7 @@ printf("\t%.2f\n", $1*(1+$2)^i)
 ### 1.7 Arrays
 awk里可以用数组了，而且看样子还不用初始化，直接用就可以了。比如：以输入顺序的反向输出
 需要注意的是，一个awk程序里有多个pattern-action,按顺序实现自己的作用，比如一下就有两个action
+
 ```
 {
 
@@ -222,16 +248,7 @@ print $2,$1,a
 
 }
 
-  
-
-
 书上的思路是$1 $2只是容器，可以直接交换容器内容后输出
-
-  
-
-
-  
-
 
 `{temp = $1; $1 = $2; $2 = temp; print $0}`
 
@@ -241,12 +258,6 @@ print $2,$1,a
 明显书的思路比我的简单，我的比较复杂；知道了14题的操作，15题就很简单了;
 
   
-
-
-  
-
-
-
   * 15 print everyline with the first field replaced by the line number
   `{$1 = NR; print}`
 
