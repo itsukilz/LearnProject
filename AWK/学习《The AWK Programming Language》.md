@@ -25,7 +25,7 @@ CP2 是 语言语法介绍
 ## CP1
 
 ### 1.1 Getting Started
-emp.data里储存了三列数据，姓名，每小时工资，工作小时数
+../data/emp.data里储存了三列数据，姓名，每小时工资，工作小时数
 
 Beth 4.00 0
 
@@ -43,7 +43,7 @@ Susie 4.25 1
 
   * 统计所有工作小时大于0的人的工资
 
-  `awk '$3>0 { print $1, $2*$3 } emp.data'`
+  `awk '$3>0 { print $1, $2*$3 } ../data/emp.data'`
 
   结果：
 
@@ -53,15 +53,15 @@ Mark 100
 Mary 121
 Susie 76.
 ```
-  * awk告诉system to run awk， ''之间是可执行的awk程序 , emp.data是input file.
+  * awk告诉system to run awk， ''之间是可执行的awk程序 , ../data/emp.data是input file.
   * 程序是`pattern {action} statement`： 对每一行匹配$3>0这个pattern, 匹配上就执行{}中的action。
-  * 统计工作小时为0的人的姓名`awk '$3 == 0 {print $1 }' emp.data`
+  * 统计工作小时为0的人的姓名`awk '$3 == 0 {print $1 }' ../data/emp.data`
 
 #### 注意
 
   * 可以有多个input files
 
-假设有一个文件 emp2.data
+假设有一个文件 ../data/emp2.data
  
 ```
 Danny 4.00 0
@@ -70,7 +70,7 @@ Nine 5.50 22
 Mike 4.25 18
 ```
 
-输入了这个程序`awk '$3 > 0 {print $1}' emp.data emp2.data`,输出是emp 第三个field>0的第一个field，emp2 第三个field>0的第一个field。即先处理第一个文件，再处理第二个文件，最后输出
+输入了这个程序`awk '$3 > 0 {print $1}' ../data/emp.data e../data/mp2.data`,输出是emp 第三个field>0的第一个field，emp2 第三个field>0的第一个field。即先处理第一个文件，再处理第二个文件，最后输出
 
   * 三种执行方式第一种是常见的 `awk 'program' file1 file2`第二种是 `awk 'program'`，然后一行输入，执行，输出。第三种是`awk -f awkprogramfile file1 file2`，如果程序太长，可以将''中的内容存在awkprogramfile中，直接用-f 参数执行。
   * awk有自己的语法，如果程序出现语法错误，会报syntax error错误。
@@ -90,30 +90,30 @@ Mike 4.25 18
   * computing , 
   fields之间可以计算,并将计算结果输出`{print $2*$3}`
   * putting text in the output
-  `'{print "total pay for",$1, "is",$2*$3}'` ——> ','默认代表空格，可以修改，结果是：total pay for Susie is 76.5awk `'{print "total pay for"$1"is"$2*$3}' emp.data` ——> 不加逗号，就没有空格，结果是:total pay forSusieis76.5
+  `'{print "total pay for",$1, "is",$2*$3}'` ——> ','默认代表空格，可以修改，结果是：total pay for Susie is 76.5awk `'{print "total pay for"$1"is"$2*$3}' ../data/emp.data` ——> 不加逗号，就没有空格，结果是:total pay forSusieis76.5
 
 ### 1.3 fancier output
 
   * 使用 printf("format",value1,value2..) 来控制输出格式,format的格式和python一致。
-  `awk '{ printf("total pay for %s is %.2f\n",$1,$2*$3) }' emp.data`
-  `awk '{ printf("%-8s %6.2f\n", $1,$2*$3)}' emp.data` ——> %8s是8个字符的预留，右对齐；%-8s是左对齐； %6.2f是6个字符的预留，右对齐
+  `awk '{ printf("total pay for %s is %.2f\n",$1,$2*$3) }' ../data/emp.data`
+  `awk '{ printf("%-8s %6.2f\n", $1,$2*$3)}' ../data/emp.data` ——> %8s是8个字符的预留，右对齐；%-8s是左对齐； %6.2f是6个字符的预留，右对齐
 
-  * 使用sort， 经试验，sort应该是按照第一个字段来排序的，所以想用什么排序，就把它放在输出的第一个字段`awk '{ printf("%6.2f %s\n",$2*$3,$1)}' emp.data | sort`
+  * 使用sort， 经试验，sort应该是按照第一个字段来排序的，所以想用什么排序，就把它放在输出的第一个字段`awk '{ printf("%6.2f %s\n",$2*$3,$1)}' ../data/emp.data | sort`
   
 ### 1.4 Selection
 可以用在pattern里的，记住'pattern{action}'这个模式，匹配成功如果没有action就直接把匹配出的行输
 
   * 数字比较
-  `awk '$2 >=5' emp.data` 将所有第二字段>=5的行输出`awk '$2*$3 > 50 {printf ("$%.2f for %s\n",$2*$3,$1)}' emp.data`
+  `awk '$2 >=5' ../data/emp.data` 将所有第二字段>=5的行输出`awk '$2*$3 > 50 {printf ("$%.2f for %s\n",$2*$3,$1)}' ../data/emp.data`
   * 文字匹配
-  `awk '$1 == "Susie"' emp.data` 第一字段=="Susie"同时还可以用正则表达式,TODO: 见SELECTION 2.1
+  `awk '$1 == "Susie"' ../data/emp.data` 第一字段=="Susie"同时还可以用正则表达式,TODO: 见SELECTION 2.1
   * 条件组合&&-AND， ||-OR，！- NOT
-  `awk '$1!="Susie" && $2 <= 4' emp.data`
+  `awk '$1!="Susie" && $2 <= 4' ../data/emp.data`
   * 数据验证
   在使用数据前先通过一些测试来验证数据，把测试awk写入一个awk文件中，直接-f,如果没有error，就没有输出，就可使用。（类似测试文件）
   `NF != 3 {print $0, "number of fields is not equal to 3"}$3 < 0 {print $0, "negative hours worked"}`
   * BEGIN END 分别匹配第一个文件的第一行之前，最后一个文件的最后一行之后,注意不是同一个文件的第一行和
-  最后一行可以用来生成表头和收尾语句。`awk 'BEGIN {print "NAME RATE HOURS" ; print ""} {print }' emp.data`
+  最后一行可以用来生成表头和收尾语句。`awk 'BEGIN {print "NAME RATE HOURS" ; print ""} {print }' ../data/emp.data`
 
 ### 1.5 Computing
 不用初始化变量，第一次使用时数字自动为0，字符串自动为nul
@@ -121,25 +121,25 @@ Mike 4.25 18
 #### counting and computing sum/avg
 
   * 统计工时超过15的员工数量
-  `awk '$3 > 15 {emp = emp + 1} END {printf("%d employees have workd more than 15 hours\n",emp)}' emp.data`
+  `awk '$3 > 15 {emp = emp + 1} END {printf("%d employees have workd more than 15 hours\n",emp)}' ../data/emp.data`
 
   * 计算平均工资(较长的程序可以写成文件执行，或用;分隔) 
-  `awk '{pay = pay + $2 * $3} END { print NR, "employees";print "total pay is",pay;print "average pay is", pay/NR }' emp.data`
+  `awk '{pay = pay + $2 * $3} END { print NR, "employees";print "total pay is",pay;print "average pay is", pay/NR }' ../data/emp.data`
 
   * 找到最高小时工资的人
-  `awk '$2 > maxrate { maxrate = $2; maxemp = $1} END { print "highest hourly rate:",maxrate,"for",maxemp }' emp.data`
+  `awk '$2 > maxrate { maxrate = $2; maxemp = $1} END { print "highest hourly rate:",maxrate,"for",maxemp }' ../data/emp.data`
 
 #### string concatenation
-`awk ' {names = names $1 " "} END {print names}' emp.data` 字符串拼接就直接是a b c，输出就是 ab
+`awk ' {names = names $1 " "} END {print names}' ../data/emp.data` 字符串拼接就直接是a b c，输出就是 ab
 
-  * 输出最后一行两个都可以`awk 'END {pring $0}' emp.dataawk '{last = $0} END {print last}' emp.data`
+  * 输出最后一行两个都可以`awk 'END {pring $0}' ../data/emp.dataawk '{last = $0} END {print last}' ../data/emp.data`
 
 #### built-in functions
 length(string),length 可以处理一整行 length($0
-`awk 'length($1)<4 {print $0}' emp.data`
+`awk 'length($1)<4 {print $0}' ../data/emp.data`
 
 #### counting lines, words, characters
-`awk '{nw += NF; nc += length($0) - (NF-1)} END {print NR, nw, nc}' emp.data`
+`awk '{nw += NF; nc += length($0) - (NF-1)} END {print NR, nw, nc}' ../data/emp.data`
 
 ### 1.6 Control-Flow Statements
 语法和C语言完全一致，可以通用，且 只能用于action
@@ -167,7 +167,7 @@ print "no employees are paid more than $6/hour"
 新数据：amount rate year,每一年总金额为 amount*(1+rate)^year,求每一行每一年的总金额
 这个程序是目前为止最像C语言程序的一个了，注意整个{}里是action, action里有n行，依次执行命令
 
-```
+```shell
 { i = 1 #初始化变量
 
 print $0 #打印原始行
@@ -187,7 +187,7 @@ i = i+1
 
   * for 用for重写上面计算总金额的程序
 
-```
+```shell
 { print $0 #打印原始行
 
 # i为年，当i小于总年数的时候，算总金额，并让i递增
@@ -207,7 +207,7 @@ printf("\t%.2f\n", $1*(1+$2)^i)
 awk里可以用数组了，而且看样子还不用初始化，直接用就可以了。比如：以输入顺序的反向输出
 需要注意的是，一个awk程序里有多个pattern-action,按顺序实现自己的作用，比如一下就有两个action
 
-```
+```shell
 {
 
 line[NR] = $0 #创建一个数组line，将每行用NR作为下标存储
@@ -228,14 +228,9 @@ print line[i]
 ### 1.8 One-liners
 
   * 14 交换$1 $2，然后输出交换后的每一行
-这题我的思路是将3-NF的拼接在一起，最后输出2，1，拼接
+这题我的思路是将3-NF的拼接在一起，最后输出2，1，拼接  
 
-  
-
-
-  
-
-```
+```shell
 { a = Null;
 
 for(i=3; i<=NF; i+=1){ 
@@ -272,11 +267,11 @@ print $2,$1,a
   * awk自然的将每行切分为fields
 
 ## CP 2 The awk language
-awk 自然用空格作为input field的分隔符，但在countries.data里，必须用\t分隔符：`awk -F'\t' '{print $1,$4}' countries.data`
+awk 自然用空格作为input field的分隔符，但在../data/countries.data里，必须用\t分隔符：`awk -F'\t' '{print $1,$4}' ../data/countries.data`
 
 program format: 1,可以用分号作为一个action内多个statement的区分；2，在awk文件中为了提高可读性，可以用\来换行； 3，注释用#
 
-```
+```shell
 {print $1, $3; print $2}
 
   
@@ -311,7 +306,9 @@ string 的比较通常是ASCII码比较，比如"Canada" < "China"，可以通�
 1. A行和B行是同一行：A行不仅能匹配成功pat1，也能匹配成功pat2,那么这个A-pat1,A-pat2结果就直接输出A一行；
 2. A-pat1,B-pat2的模式匹配多处，比如1-pat1,2-pat2; 4-pat1,7-pat2，那么按顺序输出1-2，4-7。但第二处匹配必须从第一处匹配结束的后一行开始。
 
-```2的例子
+```shell
+
+2的例子
 U
 USA
 PSA
@@ -331,9 +328,9 @@ pat2:/SA$/
 
 另一种使用方式，对特定一系列行进行操作：FNR是目前这个文件读的行数（NR是目前为止所有读的行数）,FILENAME是当前文件的名称；
 
-```
+```shell
 input:
-awk -F'\t' 'FNR==2, FNR==5 {print FILENAME ":" $0}' countries.data test.data
+awk -F'\t' 'FNR==2, FNR==5 {print FILENAME ":" $0}' ../data/countries.data ../data/test.data
 
 output:（两个文件的第2-5行)
 countries.data:Brazil	3286	134	South America
@@ -348,6 +345,103 @@ test.data:PSA
 
 ### 2.2 Actions
 
+#### 所有action类型列举
+- expressions
+- print expression-list
+- printf(format, expression-list)
+
+- if (expression) statement
+- if (expression) statement  else *statement*
+
+- while (expression) *statement*
+- do *statement* while (expression)
+- for(expression;expression;expression) *statement*
+- for(variable in array) *statement*
+
+- break,continue,next,exit
+- exit expressions {*statement*}
+
+#### Expressions
+主要分成primary expression 和 operators that combine expressions（已知，算术，条件?:，逻辑，匹配~/!~，++ -- ）
+
+primary expression主要有：numberic and string constants, variables, fields, function calls, arrary elements
+
+- Variables: Built-in, fields, User-defined
+fields: $1,$2， FS（输入分隔符），OFS（输出分隔符）
+built-in: 已知的有NF, NR, FILENAME, FNR
+user-defined: 自定义，不用初始化。
+
+Example:
+
+```shell
+# FS,OFS
+awk 'BEGIN {FS="\t"; OFS="**"} {print $1,$2}' ../data/countries.data
+
+output:
+USSA**8649
+Brazil**3286
+Canada**3852
+China**3705
+USA**3615
+India**1267
+Mexico**762
+France**211
+Japan**144
+Germany**96
+England**94
+
+```
+
+- functions: Built-in(数字的，字符串的), User-defined
+  - 字符串函数： length(s), index(s,t)-*return first position of string t in s*, split(s,a)-*split s into arrary a on FS*, sub(r,s)-*$0左侧最长可匹配r的子串用s替换，返回替换次数*, substr(s,p,n)-*return substring of s of length n starting at position p*,
+  - 自定义：`function isnum(n) {return n ~ /^[+-]?[0-9]+([\\.][0-9]+)?$/}`
+
+Example:
+
+```shell
+#index(s,t)
+awk '{print index($0,"SA")}' ../data/test.data
+
+output:
+0
+2
+2
+
+#split(s,a)
+awk '{split($0,a)} END {for(i=1;i<=NF;i++) print a[i]}' ../data/countries.data
+
+output:
+England
+94
+56
+Europe
+
+# sub(r,s)
+awk '{print sub(/SA/,"*"); print }' ../data/test.data    
+## 注意，sub替换的是容器里的字符串，源文件未改动，输出文件改动，返回的是改动次数
+output:
+0
+U
+1
+U*
+1
+P*
+
+# substr(s,p,n)——> 其实就是s[p:n]，但不把分隔符算为一个字符
+awk '{print substr($0,2,4)}' ../data/countries.data
+output:
+SSA
+razi
+anad
+hina
+SA  3
+ndia
+exic
+ranc
+apan
+erma
+ngla
+```
 
 ## CP 3
 
@@ -355,6 +449,7 @@ test.data:PSA
 
   * Summing columns 计算每列的和注意数组自动初始化为0；同时注意最后格式输出。
   * Sum2 check每列的fields是否和第一列一致，输出1-第一列最大列数的每列和
+
   `condition ? A:B `条件为真就执行A，条件为假就执行B，这段是在printf中也能条件判断
 
 
