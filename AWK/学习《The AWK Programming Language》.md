@@ -289,6 +289,45 @@ $2} #area in thousands of square miles
 
 ### 2.1 Patterns
 
+用Patterns去匹配每一行，若匹配成功执行对应action. 以下为六种type:
+
+- `BEGIN {action}`
+不是第一行，而是所有行之前;可以用来输出标题
+
+- `END {action}`
+不是最后一行，而是所有行结束后
+
+- `expression {action}`
+
+- `compound pattern {action}`
+&& and; || or; ! not
+
+- `/regular expression/ {action}`
+正则，在//之间
+
+- `pattern1 , pattern2 {action}`
+
+
+#### BEGIN AND END 
+注意：BEGIN和END不match任何一个输入行，它是一个位置匹配符；
+用途：可以在BEGIN里定义分隔符，输出标题；
+
+```
+  1 BEGIN {FS = "\t";  #注意需要用双引号
+  2         printf("%10s %6s %5s %s\n\n",
+  3                "Country","AREA","POP","CONTINENT")}
+  4       { area += $2; pop += $3;
+  5         printf("%10s %6d %5d %s\n",
+  6                $1,$2,$3,$4)}
+  7 END   { printf("%10s %6d %5d\n",
+  8                "TOTAL",area,pop)}
+
+```
+
+#### Expression
+注意：
+1。< <= > >= != ==可以用于数字比较，也可以用于字符串比较（数字自动转化为字符串，字符串自动转化为数字
+2。~，!~ matched by , not matched by
 string 的比较通常是ASCII码比较，比如"Canada" < "China"，可以通过终端的sort了解（第一个field，从小到大排序）。
 
 #### String-Match patterns
