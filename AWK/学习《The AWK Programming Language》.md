@@ -267,7 +267,7 @@ print $2,$1,a
   * awk自然的将每行切分为fields
 
 ## CP 2 The awk language
-awk 自然用空格作为input field的分隔符，但在../data/countries.data里，必须用\t分隔符：`awk -F'\t' '{print $1,$4}' ../data/countries.data`
+awk 自然用空格作为input field的分隔符，但在../data/countries.data里，必须用\t分隔符：`awk -F'\t' '{print $1,$4}' ../data/countries.data` 换言之，可以用`-F'分隔符'`来自行设置分隔符。
 
 program format: 1,可以用分号作为一个action内多个statement的区分；2，在awk文件中为了提高可读性，可以用\来换行； 3，注释用#
 
@@ -295,7 +295,7 @@ $2} #area in thousands of square miles
 不是第一行，而是所有行之前;可以用来输出标题
 
 - `END {action}`
-不是最后一行，而是所有行结束后
+不是最后一行，而是所有行结束后;可以用来输出结果
 
 - `expression {action}`
 
@@ -306,7 +306,7 @@ $2} #area in thousands of square miles
 正则，在//之间
 
 - `pattern1 , pattern2 {action}`
-
+range patterns 符合pattern1的A行，后接符合pattern2的B行，A-B里的所有行执行action
 
 #### BEGIN AND END 
 注意：BEGIN和END不match任何一个输入行，它是一个位置匹配符；
@@ -386,8 +386,12 @@ test.data:PSA
 
 #### 所有action类型列举
 - expressions
+constants,variables（built-in, user-defined),fields,function calls, arrary elements
++ operator
+
 - print expression-list
 - printf(format, expression-list)
+打印，以及各种格式打印
 
 - if (expression) statement
 - if (expression) statement  else *statement*
@@ -406,39 +410,115 @@ test.data:PSA
 primary expression主要有：numberic and string constants, variables, fields, function calls, arrary elements
 
 - Variables: Built-in, fields, User-defined
-fields: $1,$2， FS（输入分隔符），OFS（输出分隔符）
+例子-field_variables.awk，用于说明为什么field也是variables.
+
+```
+BEGIN {FS = "\t"; OFS = "**"}  #FS是输入分隔符，OFS输出分隔符, BEGIN事前定义
+$4 == "South America" {$4 = "SA"} # 当输入进来分隔出的$4是"South America"，将$4替换成 "SA"。 这个action里$4就是field_variables, 可以把它视作输出流中的字符串变量
+$4 == "North America" {$4 = "NA"}  # 同上
+{print} # 输出
+```
+
+真正输出时会吓一跳(如下)，为什么OFS只作用在了前两个pattern起作用的行呢？
+
+```
+USSA  8649  275 Asia
+Brazil**3286**134**SA
+Canada**3852**25**NA
+China 3705  1032  Asia
+USA**3615**237**NA
+India 1267  746 Asia
+Mexico**762**78**NA
+France  211 55  Europe
+Japan 144 120 Asia
+Germany 96  61  Europe
+England 94  56  Europe
+```
+
+把中间两个pattern去掉试试（如下），可以看到，就算我改变了OFS，如果我的输出流相对于输入流没有被改变，那么OFS是不起作用的。
+
+```
+awk 'BEGIN {FS="\t";OFS="**"} {print}' ../data/countries.data
+或者 awk 'BEGIN {FS="\t";OFS="**"} {print $0}' ../data/countries.data
+USSA  8649  275 Asia
+Brazil  3286  134 South America
+Canada  3852  25  North America
+China 3705  1032  Asia
+USA 3615  237 North America
+India 1267  746 Asia
+Mexico  762 78  North America
+France  211 55  Europe
+Japan 144 120 Asia
+Germany 96  61  Europe
+England 94  56  Europe
+```
+
+假如我就是只想改变输出流的分隔符而已呢？怎么办？(如下)，可以看到，重组输入流就可以做到。
+
+```
+awk 'BEGIN {FS="\t";OFS="**"} {print $1,$2,$3,$4}' ../data/countries.data
+
+USSA**8649**275**Asia
+Brazil**3286**134**South America
+Canada**3852**25**North America
+China**3705**1032**Asia
+USA**3615**237**North America
+India**1267**746**Asia
+Mexico**762**78**North America
+France**211**55**Europe
+Japan**144**120**Asia
+Germany**96**61**Europe
+England**94**56**Europe
+```
+
+
+fields: $1,$2， FS（输入分隔符），OFS（输出分隔符）——> FS 也可以用 `-F'\t'`来代替
 built-in: 已知的有NF, NR, FILENAME, FNR
 user-defined: 自定义，不用初始化。
 
-Example:
+例子-user_defined.awk，说明自定义变量怎么用
 
-```shell
-# FS,OFS
-awk 'BEGIN {FS="\t"; OFS="**"} {print $1,$2}' ../data/countries.data
+```
+$4 == "Asia" {pop += $3; count += 1}
+END {printf "%d Asia countries have %d population in all.",count,pop}
 
 output:
-USSA**8649
-Brazil**3286
-Canada**3852
-China**3705
-USA**3615
-India**1267
-Mexico**762
-France**211
-Japan**144
-Germany**96
-England**94
-
+4 Asia countries have 2173 population in all.
 ```
 
 - functions: Built-in(数字的，字符串的), User-defined
   - 字符串函数： length(s), index(s,t)-*return first position of string t in s*, split(s,a)-*split s into arrary a on FS*, sub(r,s)-*$0左侧最长可匹配r的子串用s替换，返回替换次数*, substr(s,p,n)-*return substring of s of length n starting at position p*,
   - 自定义：`function isnum(n) {return n ~ /^[+-]?[0-9]+([\\.][0-9]+)?$/}`
 
-Example:
+例子：利用../data/seed.data 来说明随机数函数怎么使用
 
 ```shell
-#index(s,t)
+awk '{x = rand(); print $1,x,$1*x}' ../data/seed.data    #对每个数都产生一个随机数rand()（0<=x<1），并计算两者相乘的积
+
+4 0.840188 3.36075
+5 0.394383 1.97191
+7 0.783099 5.48169
+82 0.79844 65.4721
+5 0.911647 4.55824
+45 0.197551 8.88981
+75 0.335223 25.1417
+
+
+awk '{print $1,srand($1)}' ../data/seed.data  #利用每个数作为种子，srand(x）重新产生一个随机数
+4 0
+5 4
+7 5
+82 7
+5 82
+45 5
+75 45
+```
+
+
+例子，了解内置的字符串函数
+
+```shell
+#index(s,t) 找到t字符串在s字符串中的位置，没找到输出0
 awk '{print index($0,"SA")}' ../data/test.data
 
 output:
@@ -446,25 +526,80 @@ output:
 2
 2
 
-#split(s,a)
-awk '{split($0,a)} END {for(i=1;i<=NF;i++) print a[i]}' ../data/countries.data
+#split(s,a)，将s字符串split成a 数组，此时是用默认分隔符
+awk '{split($0,a); print a[2]}' ../data/countries.data
 
 output:
-England
+8649
+3286
+3852
+3705
+3615
+1267
+762
+211
+144
+96
 94
-56
-Europe
 
-# sub(r,s)
-awk '{print sub(/SA/,"*"); print }' ../data/test.data    
-## 注意，sub替换的是容器里的字符串，源文件未改动，输出文件改动，返回的是改动次数
+# 制作分隔符为-的文件 ../data/countries_2.data
+awk 'BEGIN {FS="\t";OFS="-"}  {print $1,$2,$3,$4}' ../data/countries.data > ../data/countries_2.data
+
+# split(s,a,fs)，将s字符串split成a 数组，此时用fs作为分隔符。但神奇的是如果分隔符是"**"，尝试都失败了。换成"-"分隔符就成功了。
+awk '{split($0,a,"-"); print a[2]}' ../data/countries_2.data
+8649
+3286
+3852
+3705
+3615
+1267
+762
+211
+144
+96
+94
+
+
+# substitution:  gsub-global sub  sub-sub leftmost longest; 这两个的区别就是 global sub是将该行所有匹配的都replace掉；sub是replace掉第一个碰到的匹配，然后就结束，不再往右匹配。源文件未改动，输出文件改动，返回的是改动次数
+../data/substitution.data 长以下这样
+USASA
+USA
+SAPSA
+
+## gsub(r,s)
+awk '{print gsub(/SA/,"*"); print }' ../data/substitution.data
 output:
-0
-U
+2
+U**
+1
+U*
+2
+*P*
+
+## sub(r,s)  substitution = replacement
+awk '{print sub(/SA/,"*"); print }' ../data/substitution.data 
+output:
+1
+U*SA
 1
 U*
 1
-P*
+*PSA
+
+# sprintf 按照格式输出，但不打印，一般输出给变量
+awk '{x = sprintf("%10s %6d",$1,$2); print NR ":" x}' ../data/countries.data
+1:      USSA   8649
+2:    Brazil   3286
+3:    Canada   3852
+4:     China   3705
+5:       USA   3615
+6:     India   1267
+7:    Mexico    762
+8:    France    211
+9:     Japan    144
+10:   Germany     96
+11:   England     94
+
 
 # substr(s,p,n)——> 其实就是s[p:n]，但不把分隔符算为一个字符
 awk '{print substr($0,2,4)}' ../data/countries.data
@@ -481,6 +616,8 @@ apan
 erma
 ngla
 ```
+
+
 
 ## CP 3
 
