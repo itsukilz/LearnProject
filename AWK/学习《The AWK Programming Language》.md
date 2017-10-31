@@ -617,6 +617,19 @@ erma
 ngla
 ```
 
+- Number or String?
+
+awk中不需要手动转类型，数字和字符串会以当下需求**自动转类型**。
+例子1: number -> string  比如concatenated `{print $1 "-" $2}` 本来是作用在string上，但如果$1,$2是数字，会自动转成字符串。
+例子2: string -> number  比如+，-这种算数运算符，如果 `{print "100"+$2}` 中$1为string, 它会自动转为数字。(如果是”100“这样的，就直接转成100，如果是”asia"这样的，就转化为0)
+例子3: **==**作为比较，如果两方有一方是string，就会按照string 的比较来；如果两方都是number，才会按照number来比较。可以强制通过例1和例2的方式来转换：`$1 "" ——>将$1强制转成string； $1 + 0 ——>将$1强制转化为number.`
+变量自动初始化为**null/0**,视第一次用到的方式定。
+
+- Summary of Operator
+几个不怎么熟悉的重点：
+**in**, `i in arr`, if a[i] exists, 0 otherwise;
+**||,&&,!**, OR, and , NOT
+**()**, `($1)++`，为什么要用括号呢？ 一个返回负数绝对值的语句 `$1<0 {print "abs($1)= " -$1}`，很容易被看作是concatenate; 如果这时候改成 `$1<0 {print "abs($1)= " (-$1)}` 就消除歧义了。
 
 
 ## CP 3
@@ -626,7 +639,7 @@ ngla
   * Summing columns 计算每列的和注意数组自动初始化为0；同时注意最后格式输出。
   * Sum2 check每列的fields是否和第一列一致，输出1-第一列最大列数的每列和
 
-  `condition ? A:B `条件为真就执行A，条件为假就执行B，这段是在printf中也能条件判断
+  `condition ? A:B `条件为真就执行A，条件为假就执行B，这段是在printf中也能条件判断。 **注意，python中不可用**
 
 
 
