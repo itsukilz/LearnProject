@@ -628,10 +628,54 @@ awk中不需要手动转类型，数字和字符串会以当下需求**自动转
 - Summary of Operator
 几个不怎么熟悉的重点：
 **in**, `i in arr`, if a[i] exists, 0 otherwise;
+例子：`awk '$4 =="Asia" {a[i] = $1;i++} END {print 5 in a}' ../data/countries.data` 将亚洲的国家名都放在一个数组里，并测试数组的长度（是否有a[5]）
+
 **||,&&,!**, OR, and , NOT
 **()**, `($1)++`，为什么要用括号呢？ 一个返回负数绝对值的语句 `$1<0 {print "abs($1)= " -$1}`，很容易被看作是concatenate; 如果这时候改成 `$1<0 {print "abs($1)= " (-$1)}` 就消除歧义了。
 
+- Control-Flow Statements
+> 试过了几个例子之后，发现有一点特别需要注意，变量不需要初始化，第一次使用时就自动为 0/null，但awk里的数组是从1开始的，换言之，在未初始化i时你不能直接用a[i],此时i=0, 在涉及到数组时，必须在BEGIN里初始化i=1，再用在数组上。
 
+
+**if (expression) statement1 ;else statement2**, 注意**else 跟紧最近的那个if**,如`if (e1)  if(e2) s =1 ; else s = 2`, 那么else 是和第二个if跟紧的。第二个if和else是属于第一个if的statement1。(为了消除歧义，复杂的awk程序最好还是写成文件，使用缩进。)
+
+例子：`awk 'BEGIN {i=1} $4 =="Asia" {a[i] = $1;i++} END {if (3 in a) if (5 in a) print "ok"; else print "no" }' ../data/countries.data`
+
+**while (e1) statement1**
+
+例子：`awk 'BEGIN {i=1} $4 =="Asia" {a[i] = $1;i++} END { while (j in a) {print a[j];j++} }' ../data/countries.data`
+注意，多行statement可以用{}包裹，用;分隔。
+
+**for(e1;e2;e3) statement1**
+例子: `awk 'BEGIN{i=1} $4 =="Asia" {a[i] = $1;i++} END { for(j=1;j<i;j++) print a[j] }' ../data/countries.data`
+
+**do statement1 while(e1)**
+例子: `awk 'BEGIN {i=1;j=1} $4 =="Asia" {a[i] = $1;i++} END { do {print a[j];j++} while (j<i)} ' ../data/countries.data`
+
+
+**for(variable in array) statement1， variable是下标，不是python里的element**
+例子：`awk 'BEGIN {i=1} $4 =="Asia" {a[i] = $1;i++} END { for (j in a) {print a[j]} }' ../data/countries.data`
+
+**重点** next, exit
+next是直接输入下一行，exit是停止输入。
+exit例子：属于Asia的有四个国家：USSA、China、India、Japan，但程序设计为有三个后就停止输入，输出最后一个国家名称。
+`awk 'BEGIN {i=1} $4 =="Asia" {k = $1; i++; if(i>3) exit} END{print k} ' ../data/countries.data`
+输出为：India
+
+next的例子：碰到属于Asia的有四个国家就直接输入下一行，并且输出.(有点像if的break一样)
+`awk '{if($4 =="Asia") next;print $0} ' ../data/countries.data`
+输出为：
+
+```
+Brazil  3286  134 South America
+Canada  3852  25  North America
+USA 3615  237 North America
+Mexico  762 78  North America
+France  211 55  Europe
+Germany 96  61  Europe
+England 94  56  Europe
+
+```
 ## CP 3
 
 ### 3.1 Data Transformation and reduction
