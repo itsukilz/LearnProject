@@ -762,6 +762,26 @@ END {for (name in a) {
             print a[name]}}
 ```
 
+### 2.3 User-Defined Functions
+自己创建函数，通过例子来说明。 **注意: function中是local variables，必须涵盖在函数名后括号里的参数表内，仅在函数之内生效,如果没有在参数表中声明，那么就是全局变量**
+
+```
+#input:m,n
+#output:max(m,n)
+
+function max(m,n) {
+  return m>n ? m:n     #也可以用 if(m>n) return m; else return n来代替
+}
+
+#试一下不在参数表的函数
+#如果$1 > $2 ，那么返回$1；不然就返回0
+{print max($1)}
+function max(m) {
+  return m>$2 ? m:0     
+}
+
+```
+
 ## CP 3
 
 ### 3.1 Data Transformation and reduction
