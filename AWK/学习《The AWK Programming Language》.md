@@ -656,7 +656,7 @@ awk中不需要手动转类型，数字和字符串会以当下需求**自动转
 **for(variable in array) statement1， variable是下标，不是python里的element**
 例子：`awk 'BEGIN {i=1} $4 =="Asia" {a[i] = $1;i++} END { for (j in a) {print a[j]} }' ../data/countries.data`
 
-**重点** next, exit
+**重点 next, exit**
 next是直接输入下一行，exit是停止输入。
 exit例子：属于Asia的有四个国家：USSA、China、India、Japan，但程序设计为有三个后就停止输入，输出最后一个国家名称。
 `awk 'BEGIN {i=1} $4 =="Asia" {k = $1; i++; if(i>3) exit} END{print k} ' ../data/countries.data`
@@ -676,6 +676,92 @@ Germany 96  61  Europe
 England 94  56  Europe
 
 ```
+
+- Empty Statement
+直接用;表示empty statement，仅占位，没有其他意义。猜测和python中的pass类似。
+无法直接复现书中的例子，将FS改成","后能够复现：打印出有空field的行
+
+```
+BEGIN {FS=","}  #将分隔符改成,
+{for(i=1; i<=NF && $i != ""; i++)  #遍历每行的field，如果遇到行尾或该field是空，跳出
+    ;                              # 仅仅是遍历，什么也不执行
+  if(i<=NF)                        # 如果跳出了，说明有field为空，就打印该行
+    print }
+```
+
+- Arrays
+普通意义上的理解：一维数组，无需事先声明，可以储存string和number（但注意不要用0作为下标）
+
+```
+#逆转输出各行
+{a[NR] = $0}
+END {for (i=NR; i>0; i--) print a[i]}
+
+```
+
+**高级的地方在于：它的下标可以是string！！！**
+
+```
+# 用string作为subscript的例子
+/Asia/ {pop["Asia"] += $3}
+/Europe/ {pop["Europe"] += $3}
+END {print "Asia population is ",pop["Asia"],"million."
+     print "Europe population is ",pop["Europe"],"million."
+     }
+
+
+# 一个和上面完全相同的作用的例子
+{pop[$4] += $3}  #直接用$4的值作为subscript
+END {for (name in pop) #遍历数组的所有subscript
+        print name,pop[name]}
+
+# 使用if (element in array)
+awk '{pop[$4] += $3} END {if ("Asia" in pop) print pop["Asia"]}' ../data/countries.data
+output
+South 134
+Asia 2173
+North 340
+Europe 172
+
+
+# 使用 delete pop[element]
+awk '{pop[$4] += $3} END {if ("Asia" in pop) delete pop["Asia"]; for (name in pop) print name,pop[name]}' ../data/countries.data
+=====
+outupt
+South 134
+North 340
+Europe 172
+```
+
+
+**利用split(string,arr,fs)来创建数组**
+需要注意的是, "aaa,bbb,vvv"作为split($0,arr,",")的输入时，arr的下标是"1"-aaa,"2"-bbb,"3"-vvv；即自动生成数字下标
+如果是多行一起用arr的话，arr只会保存最后一行的split结果。
+
+```
+awk '{split($0,arr,","); for (name in arr) print name,arr[name]}'
+input:aa,bb,cc
+output:
+2 bb
+3 cc
+1 aa
+```
+
+**不支持多维数组时的一种代替方法**
+使用两个下标拼接作为一个下标使用: "i,j" 作为arr的下标。(注意，拼接后是12，32，而不是"1,2")
+
+```
+#将每行用,分隔存入数组，下标为行数列数
+BEGIN {FS = ","}
+{for(i=1;i<=NF;i++)
+    a[NR,i] = $i}
+#打印第二行的数据
+END {for (name in a) {
+        split(name,k,SUBSEP) #将拼接的下标拆出来
+        if(k[1] == "2")
+            print a[name]}}
+```
+
 ## CP 3
 
 ### 3.1 Data Transformation and reduction
