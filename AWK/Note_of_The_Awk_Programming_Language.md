@@ -782,6 +782,60 @@ function max(m) {
 
 ```
 
+### 2.4 Output(print,printf)
+The *print* and *printf* generate output. The *print* statement is used for simple output; the *printf* statement is used when careful formatting is required.
+
+- 注意
+1. 直接打印在终端内：`print ....   printf(...) `;
+2. 输出给文件：`print.. > filename; printf(...) > filename`
+3. 添加到文件后面（而不是overwritting)：`print... >> filename' printf(...) >> filename`
+4. 输出给管道，作为另一个command的输入:`print... | command; printf(...) | command`
+5. 当同一个文件中需要写入file/pipe，之后又需要read的时候，需要关闭file/pip: `close(expr)`
+
+
+例子2： 所有>和>>后的被视作文件名,`{print $1,$2 > $3}` 意味着打印$1,$2到$3命名的文件中，也可以用"> / >> filename"直接输出 `{print $1,$2 > ($3 > 100 ? "bigpop.data" : "smallpop.data")}`
+
+```
+awk 'BEGIN{FS = "-";OFS="\t"}  {print $1,$2,$3 >> $4}' ../data/countries_2.data
+# 将1，2，3添加到以4为命名的文件后
+# 换言之，直接就可以用4去分类生成文件。
+
+输出为：
+文件：Asia
+USSA    8649    275
+China   3705    1032
+India   1267    746
+Japan   144 120
+```
+
+例子4: 输出给管道, **注意是直接跟在print后面|，command需要加双引号**
+`awk -F="," '{print $1,$2 | "sort"}' ../data/empty_statement.data`
+
+- OFS and ORS
+OFS 是输出的field分隔符(Output field seperator)； ORS 是输出的行分隔符(Output record seperator), 一般在BEGIN里定义
+**输入的field分隔符是FS**
+`awk 'BEGIN{FS = "-"; OFS="\t" ; ORS = "\n\n"}  {print $1,$2}' ../data/countries_2.data`
+
+- *print*
+print expr1,expr2,...,exprn
+print (expr1,expr2,...,exprn) (**当有operator时可以优先用括号**)
+
+- *printf*
+printf format,expr1,expr2,...,exprn
+printf (format,expr1,expr2,...,exprn) 
+
+**format**
+- %c ASCII
+- %d decimal
+- %e d.dddde+1
+- %f float
+- %s string
+- %o octal number; %x hexadecimal number
+
+- %-a.b a代表空档有几格；- 代表左对齐，没有-代表右对齐； .b代表小数点后几位，用0补齐，不想用0补齐可以用%.6g
+
+ 
+
 ## CP 3
 
 ### 3.1 Data Transformation and reduction
