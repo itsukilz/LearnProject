@@ -834,7 +834,33 @@ printf (format,expr1,expr2,...,exprn)
 
 - %-a.b a代表空档有几格；- 代表左对齐，没有-代表右对齐； .b代表小数点后几位，用0补齐，不想用0补齐可以用%.6g
 
- 
+### 2.5 Input
+
+awk 接受几种input：
+- 直接输入data／file  `awk 'program' data`
+- pipe 输入data  `command | awk 'program' `
+- 一行接受一行接受 `awk 'program' `
+
+**输入的field分隔符是FS, 输入的行分隔符是RS**
+
+- FS默认是blank，可以设置FS = "\t", 但如果FS被设置成为超过一个字符的字符串，这个字符串就被视作是正则。
+
+```
+示例：如果FS被设置成为超过一个字符的字符串，这个字符串就被视作是正则。
+../data/fs.data 被设置成通过两个连续数字进行分隔的文件
+
+sdasf12dfafas34ada2sdfa44
+afdasgasdg11dsfadsg33dfa2adfag33
+
+awk 'BEGIN { FS = "[0-9][0-9]" } {print $1,$2,$3}' ../data/fs.data  #但\d\d就错了，奇怪
+
+结果：
+sdasf dfafas ada2sdfa
+afdasgasdg dsfadsg dfa2adfag
+```
+
+
+- RS 
 
 ## CP 3
 
