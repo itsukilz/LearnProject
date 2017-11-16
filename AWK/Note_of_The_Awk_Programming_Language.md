@@ -860,7 +860,25 @@ afdasgasdg dsfadsg dfa2adfag
 ```
 
 
-- RS 
+- RS是行分隔符，默认是newline(\n)， 但也可以设置成其他的分隔符（比如\t,\3)，这样每一行就变了，然后再设FS也可。
+
+```
+示例：原来这个数据行分隔符是\n，列分隔符是\t，将行分隔符改成\t，即将每个field都变成一行
+
+awk 'BEGIN {RS = "\t"} {print  }' ../data/countries.data
+
+结果：
+USSA
+8649
+275
+Asia
+Brazil
+3286
+134
+South America
+Canada
+
+```
 
 ## CP 3
 
