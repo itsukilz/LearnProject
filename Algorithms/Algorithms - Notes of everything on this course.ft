@@ -1,0 +1,534 @@
+# Algorithms - Notes of everything on this course
+## 进度.todo
+- week2
+	- stacks @done(2017-12-10)
+	- resizing arrays @done(2017-12-10)
+	- queues @done(2017-12-10)
+	- generics @done(2017-12-10)
+	- iteration @done(2017-12-10)
+	- Bag @done(2017-12-10)
+	- stack and queue applications @done(2017-12-11)
+	- programming assignment
+
+### week2
+#### stacks
+顺序：定义API，写client(对API的测试函数)，最后implement
+##### API.todo
+- StackOfString() @done(2017-12-10)
+- void push(String item) @done(2017-12-10)
+- String pop() @done(2017-12-10)
+- boolean isEmpty() @done(2017-12-10)
+- int size() @done(2017-12-10)
+##### client
+```java
+// 读取一行n个字符串，遇-pop，否则push，最后打印size
+public static void main(String[] args) {
+	String s;
+	StackOfString stack = new StackOfString();
+	while (!StdIn.isEmpty()) {
+		s = StdIn.readString();
+		if (s.equals("-")) stack.pop(); // string.equals(string2);
+		stack.push(s);
+	}
+	StdOut.println(stack.size());
+}
+
+```
+2.1 input:
+to be - or not - - to be 
+output:
+3 
+此时stack内是be to to
+##### implement(use linked-list)
+错误：
+1. 所有函数(包括构造函数)都需要有() {}，特别是构造函数，老忘记写。
+2. false 写错了，不是fasle
+3. isEmpty 写错了
+4. 命令行里输入文件结束符是：ctrl-d (可能会和其他软件的快捷键冲突)
+
+```java
+public class StackOfString {
+
+	public class Node {
+		String item;
+		Node next;
+	}
+
+	private int count;
+	private Node first;
+	public StackOfString() {  // 1 ——> public StackOfString() {}
+		count = 0;
+		first = new Node();
+	}
+	public void push(String item) {
+		Node p = new Node();
+		p.item = item;
+		p.next = first;
+		first = p;
+		count ++;
+	}
+	public String pop() {
+		if (isEmpty()) return ""; // 2 ——> false 写错了
+		p = first;
+		first = first.next; // 5 ——> frist.next = first.next 写错了。
+		p.next = null;
+		count--;
+		return p.item;
+	}
+	public boolean isEmpty() {  // 3 ——> isEmpty 写错了
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+	// 读取一行n个字符串，遇-pop，否则push，最后打印size
+	public static void main(String[] args) {
+		String s;
+		StackOfString stack = new StackOfString();
+		while (!StdIn.isEmpty()) {
+			s = StdIn.readString();
+			if (s.equals("-")) stack.pop(); // string.equals(string2);
+			else stack.push(s);
+		}
+		StdOut.println(stack.size());
+	}	
+}
+
+```
+##### timing and memory(use linked-list)
+1. timing怎么分析？
+主要看每个method做的操作和n(数据规模)有没有关系；
+在StackOfString里面，很明显，不管加入多少个node，pop和push的操作就是那么几个，没有n，所以是constant。
+2. memory怎么分析？
+看主要的数据存储结构和n之间的关系；
+在StackOfString里面，很明显，主要的数据结构就是n个node，没有其他的了。那么`memory = size(Node)*N`.
+##### implement(use array)
+错误：1. 忘了数组是从0开始计数的。count是计数，capacity也是计数，但数组下标需要减一。如果要把count又做计数又做下标取数，那么所有下标取数的地方都要-1；
+```java 
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+public class StackOfStringArray {
+	private String[] stack;
+	private int capacity;
+	private int count;
+	public StackOfString(int n) {
+		capacity = n;
+		count = 0;
+		stack = new String[n];
+	}
+	public void push(String s) {
+		// 1————>
+		// if (count == capacity) throw new java.lang.IllegalArgumentException("stack is full"); 
+		// else {
+		//	stack[count+1] = s;
+		//	count ++; 
+		
+		if (count >= capacity) throw new java.lang.IllegalArgumentException("stack is full"); 
+		else {
+			stack[count] = s;
+			count ++;
+		}
+	}
+	public String pop() {
+		String s = stack[count-1];
+		stack[count-1] = null;
+		count --;
+		return s;
+	}
+	public boolean isEmpty() {
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+}
+```
+##### timing and memory(using array)
+1. timing
+构建函数是1，其他函数也基本都是1，和n无关。
+2. memory
+主要数据结构是n的array。
+##### 总结()
+链表的实现关键要想清楚在于node的指向方向。你要想到，如果指向方向也是stack的顶端的话，那我们就没办法知道first下面第二个是什么，就没办法执行删除的操作；所以指向方向必须是stack顶端相反，顶端第一个node指向的是它下面的node，我们就能知道这个node之前的一个node是什么，就能执行删除操作。
+#### resizing arrays
+思路：push的时候，检查count 是否到了 capacity, 是的话就把capacity加倍；pop的时候，检查count是否到了1/4capacity，是的话就把capacity折半。
+重点：resize函数的实现，最直接的方式就是重新创建一个数组，然后把现有数组给复制过去。
+
+##### implement
+错误：1. 已经是instance varaible的话，method可以不用传该数据直接使用或修改。所以resize()不需要把stack传入进去，然后再return出来，直接在函数里修改即可。
+2. stack.length/2 需要考虑会不会等于0（因为要用这个数去开数组），只有stack.length=1的时候，那么count=0的时候是满足count==1/4的。所以需要把这个限制住。
+```java
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+public class StackOfStringResizingArray {
+	private String[] stack;
+	private int count;
+	public StackOfString() {
+		count = 0;
+		stack = new String[2];
+	}
+	private void resize(int n) {
+		String[] after = new String[n];
+		for (int i = 0; i < stack.length; i++) {
+			after[i] = stack[i];
+		}
+		stack = after;
+	}
+	public void push(String s) {
+		if (count == stack.length) stack = resize(2*stack.length);
+		stack[count] = s;
+		count ++;
+	}
+	public String pop() {
+		String s = stack[count-1];
+		stack[count-1] = null;
+		count --;
+		if (count == stack.length/4 && count > 0) stack = resize( stack.length/2);
+		return s;
+	}
+	public boolean isEmpty() {
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+}
+}
+```
+##### timing and memory(resizing array)
+1. timing
+其他操作都是1，但需要考虑的是resizing这个函数的用时(因为有循环)。我们可以看到，resizing这个函数不管输入的n是几，都是循环stack.length次。所以一次pop() 和push()的时间复杂度都是N。
+2. memory
+主要数据结构就是这个数组，这个数组最大是2*n。
+##### 比较resizing array 和 linked list
+1. resizing array
+ 优点：取任意元素方便，push和pop方便，空间利用少
+ 缺点：在某些push和pop操作需要调整数组
+ 适用于：需要取数的，或者大型stack
+2. linked list
+优点：push和pop方便
+缺点：取元素麻烦，需要用额外空间储存node的指向。
+适用于：不需要取元素，小型stack。
+#### queues
+##### implement(queue using linked list)
+错误：1. 当queue为空的时候，定义了first，但是没有定义last。那么当queue不空的时候，此时要用last，last仍为空。要加上last = first；
+2. 以后为了避免犯错，if后还是要加else的。if 只有在return的时候才不会执行下面的语句，但这样读代码的时候也会费解，仍然是弊大于利。
+```java
+public class QueueLinkedList{
+
+	public class Node {
+		String item;
+		Node next;
+	}
+
+	private int count;
+	private Node first, last;
+
+	public QueueLinkedList() { 
+		count = 0;
+		first = new Node();
+		last  = new Node();
+	}
+	public void enqueue(String item) {
+		Node p = new Node();
+		p.item = item;
+		if (count == 0) {
+			first = p;   // 1 ——
+			last = first;
+			p.next = null;
+		}
+		else {
+			Node oldlast = last;
+			last = p;
+			oldlast.next = last;
+		}
+		count ++;
+	}
+	public String dequeue() {
+		if (isEmpty()) return "";
+		Node oldfirst = first;
+		first = oldfirst.next;
+		count--;
+		return oldfirst.item;
+	}
+	public boolean isEmpty() { 
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+	// 读取一行n个字符串，遇- dequeue，否则enqueue，最后打印size
+	public static void main(String[] args) {
+		String s;
+		QueueLinkedList queue = new QueueLinkedList();
+		while (!StdIn.isEmpty()) {
+			s = StdIn.readString();
+			if (s.equals("-")) StdOut.println(queue.dequeue()); 
+			else queue.enqueue(s);  // 2——
+		}
+		StdOut.println(stack.size());
+	}	
+}
+```
+#### generics
+问题：怎样设计能够接受各种数据类型的数据结构？
+解决方式：数据结构用generics实现，里面的数据抽象成object(item)，client在声明这个数据类型的的时候定义这次的数据类型。
+实现：数据结构中所有数据类型都改成Item，类名旁边加<Item>. 注意泛型的数组：a = (Item[]) new Object[n];(java不允许直接定义泛型数组，这样casting会引起warning)
+primitive type has a wrapper object type，比如:
+int -- Integer
+
+```java
+public class Stack<Item> {
+
+	public class Node {
+		Item item;
+		Node next;
+	}
+
+	private int count;
+	private Node first;
+	public Stack() { 
+		count = 0;
+		first = new Node();
+	}
+	public void push(Item item) {
+		Node p = new Node();
+		p.item = item;
+		p.next = first;
+		first = p;
+		count ++;
+	}
+	public Item pop() {
+		if (isEmpty()) return ""; 
+		p = first;
+		first.next = first.next;
+		p.next = null;
+		count--;
+		return p.item;
+	}
+	public boolean isEmpty() {  
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+	// 读取一行n个字符串，遇-pop，否则push，最后打印size
+	public static void main(String[] args) {
+		String s;
+		Stack<String> stack = new Stack<String>();
+		while (!StdIn.isEmpty()) {
+			s = StdIn.readString();
+			if (s.equals("-")) stack.pop(); // string.equals(string2);
+			stack.push(s);
+		}
+		StdOut.println(stack.size());
+	}	
+}
+```
+#### iteration
+目的：To iterate the item in that data structure
+解决方式：
+1. data structure 的API里增加一个`public Iterator<Item> iterator() { return new ListIterator(); }`
+2. client中就可以直接生成一个iterator，它有两个method `{ boolean hasNext(); Item next();}` 直接用这两个method进行循环，如下:
+
+```java
+	Iterator<String> i = stack.iterator();
+	while (i.hasNext()) {
+		String s = i.next();
+		StdOut.println(s);
+	}
+```
+
+3. more elegant way (shorthand) : foreach
+```java
+for (String s : stack) 
+	StdOut.println(s);
+```
+
+4. 我们需要做的就是
+	1. `import java.util.Iterator;`
+	2. 在class声明的时候从`public class Stack<Item> {} ` 改成 `public class Stack<Item> implements Iterable<Item> {}`
+	3. 增加一个`public Iterator<Item> iterator() { return new ListIterator(); }`
+	4. 增加一个`private class ListIterator implements Iterator<Item>{}`, 并且在里面利用实现`boolean hasNext()`和`Item next()`两个method。
+##### implement(using linked list)
+错误：1. implements 而不是implement
+	2.不是`private class ListIterator implement Iterable<Item> {}` 而是 `	private class ListIterator implement Iterator<Item> {}` 注意Iterator和Iterable的区别。
+	 
+```java
+import java.util.Iterator;
+public class Stack<Item> implements Iterable<Item>{
+
+	public class Node {
+		Item item;
+		Node next;
+	}
+	
+
+	private int count;
+	private Node first;
+	
+	public Stack() { 
+		count = 0;
+		first = new Node();
+	}
+	public Iterator<Item> iterator() {
+		return new ListIterator();
+	}
+	private class ListIterator implement Iterable<Item> {
+		private Node current = first;
+		public boolean hasNext() {
+			return current.next != null;
+		}
+		public Item next() {
+			Item item = current.item;
+			current = current.next;
+			return item;
+		}	
+	}
+	public void push(Item item) {
+		Node p = new Node();
+		p.item = item;
+		p.next = first;
+		first = p;
+		count ++;
+	}
+	public Item pop() {
+		if (isEmpty()) return ""; 
+		p = first;
+		first = first.next;
+		p.next = null;
+		count--;
+		return p.item;
+	}
+	public boolean isEmpty() {  
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+	// 读取一行n个字符串，遇-pop，否则push，最后打印size
+	public static void main(String[] args) {
+		String s;
+		Stack<String> stack = new Stack<String>();
+		while (!StdIn.isEmpty()) {
+			s = StdIn.readString();
+			if (s.equals("-")) stack.pop(); // string.equals(string2);
+			else stack.push(s);
+		}
+		StdOut.println(stack.size());
+		for (String k : stack) {
+			StdOut.println(k);
+		}
+	}	
+}
+
+
+```
+##### implement(using resizing array)
+```java
+	private class ListIterator implement Iterable<Item> {
+		private current = 0;
+		public boolean hasNext() {
+			return current != stack.length-1;
+		}
+		public Item next() {
+			Item item = stack[current];
+			current ++;
+			return item;
+		}	
+	}
+```
+#### bag
+当我们不需要考虑顺序的时候，我们仅仅需要能够插入，已经有多少个，以及输出所有我们已经有的。——————bag。
+##### implement
+错误：1. 忘了import java.util.Iterator;
+2. method里面的变量不需要再定义private public了，这个是class的变量需要定义的。
+3. 所有<>里面的item 都必须是 <Item> , 类型名称，而不是item
+4. `private class ListIterator implements Iterator<Item>` 里只有一个`<Item>` ，不像`public class Bag<Item> implements Iterable<Item>` 里有两个。
+5. `class Node` 里不需要再定一个`private`了。
+6. 插入的时候不要分背包是否为空，如果让`p.next=null`，反而会出错。
+```java
+import java.util.Iterator; // 1 
+public class Bag<Item> implements Iterable<Item> {
+	private Node first;
+	private int count;
+	
+	public class Node {
+		Item item; 	// 5 不需要再声明private了
+		Node next;
+	}
+	public Bag() {
+		first = new Node();
+		count = 0;
+	}
+	public void add(Item item) {
+		Node p = new Node();  // 2
+		p.item = item;        // 6 插入的时候不用考虑是否为空。
+		p.next = first;
+		first = p;
+		count++;
+	}
+	public boolean isEmpty() {
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+	public Iterator<Item> iterator() { // 3 Iterator<Item>
+		return new ListIterator();
+	}
+	private class ListIterator implements Iterator<Item> { //4 此时不再是private class ListIterator<Item>  implements Iterator<Item>
+		private Node current = first;
+		public boolean hasNext() {
+			return current.next != null;
+		}
+		public Item next() {
+			Item item = current.item;
+			current = current.next;
+			return item;
+		}
+	} 
+}
+
+```
+##### bag总结
+本来还想着说bag这么简单，要不然就不用自己实现一遍跳过去得了，但秉承着“保证自己要会”的原则，还是写一边，结果6个错，好几个错还是用代码比较软件才能发现的。
+当然这里面也有iterator实现起来比较繁琐的原因，但却是还是给自己提醒了——不要以为自己会，不要以为自己理解，给自己时间琢磨尝试总没错的。
+#### stack and queue applications
+##### stack - dijkstra's two-stack algorithm
+错误：1.`public static void main(String[] args)` 少了 void
+2. `Stack<Double> value = new Stack<Double>();` 少了最后的括号。
+```java
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+public class Dijkstra {
+
+	public static void main(String[] args) {
+			Stack<Double> value = new Stack<Double>();
+			Stack<String> operand = new Stack<String>();
+			String input, out;
+			double inputValue, out1, out2, result;
+			while (!StdIn.isEmpty()) {
+				input = StdIn.readString();
+				if (input.equals("(")) continue;
+				else if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("／")) operand.push(input);
+				else if (!input.equals(")")) {
+					inputValue = Double.parseDouble(input);
+					value.push(inputValue);
+				}
+				else if (input.equals(")")) {
+					out1 = value.pop();
+					out2 = value.pop();
+					out = operand.pop();
+					if (out.equals("+")) value.push((out1+out2));
+					else if (out.equals("-")) value.push((out1-out2));
+					else if (out.equals("*")) value.push((out1*out2));
+					else if (out.equals("/")) value.push((out1/out2));
+				}
+			}
+			result = value.pop();
+			if (value.isEmpty() && operand.isEmpty()) StdOut.println(result);
+			else StdOut.println("Wrong exprassion.");
+		}
+}
+```

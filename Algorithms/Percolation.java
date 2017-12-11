@@ -1,9 +1,12 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 
 public class Percolation {
 	private boolean[][] grid;
 	private int size;
 	private WeightedQuickUnionUF uf;
+	private WeightedQuickUnionUF uf2;
 	private int opencount;
 
 	public Percolation(int n) {
@@ -13,6 +16,7 @@ public class Percolation {
 		grid = new boolean[n+1][n+1];
 		size = n;
 		uf = new WeightedQuickUnionUF(n*n+2);
+		uf2 = new WeightedQuickUnionUF(n*n+2);
 		opencount = 0;
 
 		for (int i = 1; i <= n; i++) {
@@ -28,6 +32,7 @@ public class Percolation {
 	}
 
 	private int map(int row, int col) {
+
 		return size * (row - 1) + col;
 	}
 
@@ -47,21 +52,37 @@ public class Percolation {
 			int x = map(row, col);
 
 			// first line and last line
-			if (row == 1) uf.union(0, x);
+			if (row == 1) {
+				uf.union(0, x);
+				uf2.union(0, x);
+			} 
 			if (row == size) uf.union(size*size+1, x);
 			//  four directions
-			if (row > 1 && isOpen(row-1, col)) uf.union(x, x-size);
-			if (row < size && isOpen(row+1, col)) uf.union(x, x+size);
-			if (col > 1 && isOpen(row, col-1)) uf.union(x, x-1);
-			if (col < size && isOpen(row, col+1)) uf.union(x, x+1);
+			if (row > 1 && isOpen(row-1, col)) {
+				uf.union(x, x-size);
+				uf2.union(x, x-size);
+			}
+			if (row < size && isOpen(row+1, col)) {
+				uf.union(x, x+size);
+				uf2.union(x, x+size);
+			}
+			if (col > 1 && isOpen(row, col-1)) {
+				uf.union(x, x-1);
+				uf2.union(x, x-1);
+			}
+			if (col < size && isOpen(row, col+1)) {
+				uf.union(x, x+1);
+				uf2.union(x, x+1);
+			}
 		}
 	}
 
 	public boolean isFull(int row, int col) {
 		checkIllegal(row, col);
+		if (!isOpen(row, col)) return false;
 		int x = map(row, col);
+		return uf2.connected(0, x);
 
-		return uf.connected(0, x);
 	}
 
 	public boolean percolates() {
@@ -82,8 +103,8 @@ public class Percolation {
 			a = StdIn.readInt();
 			b = StdIn.readInt();
 			p.open(a, b);
-			// StdOut.printf("%d,%d\t%d,%s\n",a,b,p.numberOfOpenSites(),p.percolates());			
-			StdOut.println(p.isFull(a, b));
+			
+			// StdOut.println(p.isFull(a, b));
 			if (p.percolates()) {
 				flag = 1;
 				break;

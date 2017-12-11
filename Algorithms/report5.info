@@ -1,0 +1,1105 @@
+See the Assessment Guide for information on how to interpret this report.
+
+ASSESSMENT SUMMARY
+
+Compilation:  PASSED
+API:          PASSED
+
+Findbugs:     PASSED
+PMD:          PASSED
+Checkstyle:   FAILED (0 errors, 1 warning)
+
+Correctness:  17/30 tests passed
+Memory:       4/8 tests passed
+Timing:       4/20 tests passed
+
+Aggregate score: 53.00%
+[Compilation: 5%, API: 5%, Findbugs: 0%, PMD: 0%, Checkstyle: 0%, Correctness: 60%, Memory: 10%, Timing: 20%]
+
+ASSESSMENT DETAILS
+
+The following files were submitted:
+----------------------------------
+2.4K Dec  8 00:45 Percolation.java
+2.2K Dec  8 00:45 PercolationStats.java
+
+
+********************************************************************************
+*  COMPILING                                                                    
+********************************************************************************
+
+
+% javac Percolation.java
+*-----------------------------------------------------------
+
+% javac PercolationStats.java
+*-----------------------------------------------------------
+
+
+================================================================
+
+
+Checking the APIs of your programs.
+*-----------------------------------------------------------
+Percolation:
+
+PercolationStats:
+
+================================================================
+
+
+********************************************************************************
+*  CHECKING STYLE AND COMMON BUG PATTERNS                                       
+********************************************************************************
+
+
+% findbugs *.class
+*-----------------------------------------------------------
+
+
+================================================================
+
+
+% pmd .
+*-----------------------------------------------------------
+Percolation.java:7: The private instance (or static) variable 'size' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+Percolation.java:8: The private instance (or static) variable 'uf' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+Percolation.java:9: The private instance (or static) variable 'uf2' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+PercolationStats.java:6: Can you replace the instance (or static) variable 'result' with a local variable? [SingularField]
+PercolationStats.java:6: The private instance (or static) variable 'result' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+PercolationStats.java:7: The private instance (or static) variable 'hi' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+PercolationStats.java:7: The private instance (or static) variable 'lo' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+PercolationStats.java:7: The private instance (or static) variable 'mean' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+PercolationStats.java:7: The private instance (or static) variable 'stddev' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+PercolationStats.java:9: The private instance (or static) variable 'confidence' can be made 'final'; it is initialized only in the declaration or constructor. [ImmutableField]
+PMD ends with 10 warnings.
+
+
+================================================================
+
+
+% checkstyle *.java
+*-----------------------------------------------------------
+[WARN] Percolation.java:6:1: File contains tab characters (this is the first occurrence). Configure your editor to replace tabs with spaces. [FileTabCharacter]
+Checkstyle ends with 0 errors and 1 warning.
+
+% custom checkstyle checks for Percolation.java
+*-----------------------------------------------------------
+
+% custom checkstyle checks for PercolationStats.java
+*-----------------------------------------------------------
+
+
+================================================================
+
+
+********************************************************************************
+*  TESTING CORRECTNESS
+********************************************************************************
+
+Testing correctness of Percolation
+*-----------------------------------------------------------
+Running 15 total tests.
+
+Tests 1 through 8 create a Percolation object using your code, then repeatedly
+open sites by calling open(). After each call to open(), it checks the return
+values of isOpen(), percolates(), numberOfOpenSites(), and isFull() in that order.
+Except as noted, a site is opened at most once.
+
+Tests 13 through 15 test backwash.
+
+Test 1: open predetermined list of sites using file inputs
+  * filename = input6.txt
+    - isFull() returns wrong value after 6 sites opened
+    - student   isFull(5, 5) = false
+    - reference isFull(5, 5) = true
+  * filename = input8.txt
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test1(TestPercolation.java:572)
+    TestPercolation.main(TestPercolation.java:788)
+
+  * filename = input8-no.txt
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test1(TestPercolation.java:573)
+    TestPercolation.main(TestPercolation.java:788)
+
+  * filename = input10-no.txt
+    - isFull() returns wrong value after 25 sites opened
+    - student   isFull(2, 10) = false
+    - reference isFull(2, 10) = true
+  * filename = greeting57.txt
+    java.lang.IllegalArgumentException: index -55 is not between 0 and 3250
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test1(TestPercolation.java:575)
+    TestPercolation.main(TestPercolation.java:788)
+
+  * filename = heart25.txt
+    java.lang.IllegalArgumentException: index -17 is not between 0 and 626
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test1(TestPercolation.java:576)
+    TestPercolation.main(TestPercolation.java:788)
+
+==> FAILED
+
+Test 2: open random sites until just before system percolates
+  * n = 3
+  * n = 5
+    java.lang.IllegalArgumentException: index -2 is not between 0 and 26
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandom(TestPercolation.java:247)
+    TestPercolation.test2(TestPercolation.java:586)
+    TestPercolation.main(TestPercolation.java:791)
+
+  * n = 10
+    java.lang.IllegalArgumentException: index -2 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandom(TestPercolation.java:247)
+    TestPercolation.test2(TestPercolation.java:587)
+    TestPercolation.main(TestPercolation.java:791)
+
+  * n = 10
+    - isFull() returns wrong value after 28 sites opened
+    - student   isFull(2, 9) = false
+    - reference isFull(2, 9) = true
+  * n = 20
+    java.lang.IllegalArgumentException: index -8 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkRandom(TestPercolation.java:247)
+    TestPercolation.test2(TestPercolation.java:589)
+    TestPercolation.main(TestPercolation.java:791)
+
+  * n = 20
+    java.lang.IllegalArgumentException: index -6 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandom(TestPercolation.java:247)
+    TestPercolation.test2(TestPercolation.java:590)
+    TestPercolation.main(TestPercolation.java:791)
+
+  * n = 50
+    java.lang.IllegalArgumentException: index -47 is not between 0 and 2501
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandom(TestPercolation.java:247)
+    TestPercolation.test2(TestPercolation.java:591)
+    TestPercolation.main(TestPercolation.java:791)
+
+  * n = 50
+    - isFull() returns wrong value after 268 sites opened
+    - student   isFull(2, 34) = false
+    - reference isFull(2, 34) = true
+==> FAILED
+
+Test 3: open predetermined sites for n = 1 and n = 2 (corner case test)
+  * filename = input1.txt
+  * filename = input1-no.txt
+  * filename = input2.txt
+    - isFull() returns wrong value after 3 sites opened
+    - student   isFull(2, 2) = false
+    - reference isFull(2, 2) = true
+  * filename = input2-no.txt
+==> FAILED
+
+Test 4: check predetermined sites with long percolating path
+  * filename = snake13.txt
+    java.lang.IllegalArgumentException: index -12 is not between 0 and 170
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test4(TestPercolation.java:613)
+    TestPercolation.main(TestPercolation.java:797)
+
+  * filename = snake101.txt
+    java.lang.IllegalArgumentException: index -100 is not between 0 and 10202
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test4(TestPercolation.java:614)
+    TestPercolation.main(TestPercolation.java:797)
+
+==> FAILED
+
+Test 5: open every site
+  * filename = input5.txt
+    java.lang.IllegalArgumentException: index -3 is not between 0 and 26
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test5(TestPercolation.java:621)
+    TestPercolation.main(TestPercolation.java:800)
+
+==> FAILED
+
+Test 6: open random sites until just before system percolates,
+        allowing open() to be called on a site more than once
+  * n = 3
+  * n = 5
+    java.lang.IllegalArgumentException: index -3 is not between 0 and 26
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkRandomAllowDuplicateSites(TestPercolation.java:271)
+    TestPercolation.test6(TestPercolation.java:632)
+    TestPercolation.main(TestPercolation.java:803)
+
+  * n = 10
+    java.lang.IllegalArgumentException: index -7 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomAllowDuplicateSites(TestPercolation.java:271)
+    TestPercolation.test6(TestPercolation.java:633)
+    TestPercolation.main(TestPercolation.java:803)
+
+  * n = 10
+    java.lang.IllegalArgumentException: index -7 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkRandomAllowDuplicateSites(TestPercolation.java:271)
+    TestPercolation.test6(TestPercolation.java:634)
+    TestPercolation.main(TestPercolation.java:803)
+
+  * n = 20
+    java.lang.IllegalArgumentException: index -13 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomAllowDuplicateSites(TestPercolation.java:271)
+    TestPercolation.test6(TestPercolation.java:635)
+    TestPercolation.main(TestPercolation.java:803)
+
+  * n = 20
+    java.lang.IllegalArgumentException: index -7 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkRandomAllowDuplicateSites(TestPercolation.java:271)
+    TestPercolation.test6(TestPercolation.java:636)
+    TestPercolation.main(TestPercolation.java:803)
+
+  * n = 50
+    java.lang.IllegalArgumentException: index -43 is not between 0 and 2501
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TestPercolation.checkRandomAllowDuplicateSites(TestPercolation.java:271)
+    TestPercolation.test6(TestPercolation.java:637)
+    TestPercolation.main(TestPercolation.java:803)
+
+  * n = 50
+    java.lang.IllegalArgumentException: index -1 is not between 0 and 2501
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkRandomAllowDuplicateSites(TestPercolation.java:271)
+    TestPercolation.test6(TestPercolation.java:638)
+    TestPercolation.main(TestPercolation.java:803)
+
+==> FAILED
+
+Test 7: call methods with invalid arguments
+  * n = 10, (row, col) = (-1, 5)
+  * n = 10, (row, col) = (11, 5)
+  * n = 10, (row, col) = (0, 5)
+  * n = 10, (row, col) = (5, -1)
+  * n = 10, (row, col) = (5, 11)
+  * n = 10, (row, col) = (5, 0)
+  * n = 10, (row, col) = (-2147483648, -2147483648)
+  * n = 10, (row, col) = (2147483647, 2147483647)
+==> passed
+
+Test 8: call constructor with invalid argument
+  * n = -10
+  * n = -1
+  * n = 0
+==> passed
+
+Test 9: create multiple Percolation objects at the same time
+        (to make sure you didn't store data in static variables)
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkTwoPercolationObjects(TestPercolation.java:394)
+    TestPercolation.test9(TestPercolation.java:673)
+    TestPercolation.main(TestPercolation.java:812)
+
+    - isFull() returns wrong value after 33 sites opened
+    - student   isFull(2, 10) = false
+    - reference isFull(2, 10) = true
+    java.lang.IllegalArgumentException: index -2 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkTwoPercolationObjects(TestPercolation.java:396)
+    TestPercolation.test9(TestPercolation.java:675)
+    TestPercolation.main(TestPercolation.java:812)
+
+==> FAILED
+
+Test 10: open predetermined list of sites using file inputs,
+         but permute the order in which methods are called
+  * filename = input8.txt;  order =     isFull(),     isOpen(), percolates()
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:215)
+    TestPercolation.test10(TestPercolation.java:685)
+    TestPercolation.main(TestPercolation.java:815)
+
+  * filename = input8.txt;  order =     isFull(), percolates(),     isOpen()
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:215)
+    TestPercolation.test10(TestPercolation.java:686)
+    TestPercolation.main(TestPercolation.java:815)
+
+  * filename = input8.txt;  order =     isOpen(),     isFull(), percolates()
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:215)
+    TestPercolation.test10(TestPercolation.java:687)
+    TestPercolation.main(TestPercolation.java:815)
+
+  * filename = input8.txt;  order =     isOpen(), percolates(),     isFull()
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:215)
+    TestPercolation.test10(TestPercolation.java:688)
+    TestPercolation.main(TestPercolation.java:815)
+
+  * filename = input8.txt;  order = percolates(),     isOpen(),     isFull()
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:215)
+    TestPercolation.test10(TestPercolation.java:689)
+    TestPercolation.main(TestPercolation.java:815)
+
+  * filename = input8.txt;  order = percolates(),     isFull(),     isOpen()
+    java.lang.IllegalArgumentException: index -4 is not between 0 and 65
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkFile(TestPercolation.java:215)
+    TestPercolation.test10(TestPercolation.java:690)
+    TestPercolation.main(TestPercolation.java:815)
+
+==> FAILED
+
+Test 11: call all methods in random order until just before system percolates
+  * n = 3
+    java.lang.IllegalArgumentException: index -2 is not between 0 and 10
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCallsUntilPercolation(TestPercolation.java:437)
+    TestPercolation.test11(TestPercolation.java:699)
+    TestPercolation.main(TestPercolation.java:818)
+
+
+  * n = 5
+    java.lang.IllegalArgumentException: index -1 is not between 0 and 26
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCallsUntilPercolation(TestPercolation.java:437)
+    TestPercolation.test11(TestPercolation.java:700)
+    TestPercolation.main(TestPercolation.java:818)
+
+
+  * n = 7
+    java.lang.IllegalArgumentException: index -6 is not between 0 and 50
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TestPercolation.checkRandomCallsUntilPercolation(TestPercolation.java:437)
+    TestPercolation.test11(TestPercolation.java:701)
+    TestPercolation.main(TestPercolation.java:818)
+
+
+  * n = 10
+    java.lang.IllegalArgumentException: index -5 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TestPercolation.checkRandomCallsUntilPercolation(TestPercolation.java:437)
+    TestPercolation.test11(TestPercolation.java:702)
+    TestPercolation.main(TestPercolation.java:818)
+
+
+  * n = 20
+    java.lang.IllegalArgumentException: index -17 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkRandomCallsUntilPercolation(TestPercolation.java:437)
+    TestPercolation.test11(TestPercolation.java:703)
+    TestPercolation.main(TestPercolation.java:818)
+
+
+  * n = 50
+    java.lang.IllegalArgumentException: index -48 is not between 0 and 2501
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCallsUntilPercolation(TestPercolation.java:437)
+    TestPercolation.test11(TestPercolation.java:704)
+    TestPercolation.main(TestPercolation.java:818)
+
+
+==> FAILED
+
+Test 12: call all methods in random order until almost all sites are open,
+         but with inputs not prone to backwash
+  * n = 3
+    - isFull() returns wrong value after 5 sites opened
+    - student   isFull(2, 2) = false
+    - reference isFull(2, 2) = true
+    - failed on trial 1 of 40
+
+  * n = 5
+    java.lang.IllegalArgumentException: index -3 is not between 0 and 26
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCallsNoBackwash(TestPercolation.java:502)
+    TestPercolation.test12(TestPercolation.java:715)
+    TestPercolation.main(TestPercolation.java:821)
+
+  * n = 7
+    java.lang.IllegalArgumentException: index -2 is not between 0 and 50
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCallsNoBackwash(TestPercolation.java:502)
+    TestPercolation.test12(TestPercolation.java:716)
+    TestPercolation.main(TestPercolation.java:821)
+
+  * n = 10
+    java.lang.IllegalArgumentException: index -3 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCallsNoBackwash(TestPercolation.java:502)
+    TestPercolation.test12(TestPercolation.java:717)
+    TestPercolation.main(TestPercolation.java:821)
+
+  * n = 20
+    java.lang.IllegalArgumentException: index -11 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TestPercolation.checkRandomCallsNoBackwash(TestPercolation.java:502)
+    TestPercolation.test12(TestPercolation.java:718)
+    TestPercolation.main(TestPercolation.java:821)
+
+  * n = 50
+    java.lang.IllegalArgumentException: index -35 is not between 0 and 2501
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCallsNoBackwash(TestPercolation.java:502)
+    TestPercolation.test12(TestPercolation.java:719)
+    TestPercolation.main(TestPercolation.java:821)
+
+==> FAILED
+
+Test 13: check for backwash with predetermined sites
+  * filename = input20.txt
+    java.lang.IllegalArgumentException: index -15 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test13(TestPercolation.java:728)
+    TestPercolation.main(TestPercolation.java:824)
+
+  * filename = input10.txt
+    - isFull() returns wrong value after 25 sites opened
+    - student   isFull(2, 10) = false
+    - reference isFull(2, 10) = true
+  * filename = input50.txt
+    java.lang.IllegalArgumentException: index -38 is not between 0 and 2501
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test13(TestPercolation.java:730)
+    TestPercolation.main(TestPercolation.java:824)
+
+  * filename = jerry47.txt
+    java.lang.IllegalArgumentException: index -9 is not between 0 and 2210
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test13(TestPercolation.java:731)
+    TestPercolation.main(TestPercolation.java:824)
+
+  * filename = sedgewick60.txt
+    - isFull() returns wrong value after 207 sites opened
+    - student   isFull(2, 4) = false
+    - reference isFull(2, 4) = true
+  * filename = wayne98.txt
+    java.lang.IllegalArgumentException: index -62 is not between 0 and 9605
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test13(TestPercolation.java:733)
+    TestPercolation.main(TestPercolation.java:824)
+
+==> FAILED
+
+Test 14: check for backwash with predetermined sites that have
+         multiple percolating paths
+  * filename = input3.txt
+    java.lang.IllegalArgumentException: index -2 is not between 0 and 10
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test14(TestPercolation.java:743)
+    TestPercolation.main(TestPercolation.java:827)
+
+  * filename = input4.txt
+    java.lang.IllegalArgumentException: index -3 is not between 0 and 17
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkFile(TestPercolation.java:183)
+    TestPercolation.test14(TestPercolation.java:744)
+    TestPercolation.main(TestPercolation.java:827)
+
+  * filename = input7.txt
+    - isFull() returns wrong value after 12 sites opened
+    - student   isFull(7, 4) = false
+    - reference isFull(7, 4) = true
+==> FAILED
+
+Test 15: call all methods in random order until all sites are open,
+         allowing isOpen() to be called on a site more than once
+         (these inputs are prone to backwash)
+  * n = 3
+    - isFull() returns wrong value after 8 sites opened
+    - student   isFull(2, 1) = false
+    - reference isFull(2, 1) = true
+    - failed on trial 1 of 40
+
+  * n = 5
+    java.lang.IllegalArgumentException: index -2 is not between 0 and 26
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCalls(TestPercolation.java:543)
+    TestPercolation.test15(TestPercolation.java:757)
+    TestPercolation.main(TestPercolation.java:830)
+
+  * n = 7
+    - isFull() returns wrong value after 13 sites opened
+    - student   isFull(2, 6) = false
+    - reference isFull(2, 6) = true
+    - failed on trial 1 of 10
+
+  * n = 10
+    java.lang.IllegalArgumentException: index -1 is not between 0 and 101
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCalls(TestPercolation.java:543)
+    TestPercolation.test15(TestPercolation.java:759)
+    TestPercolation.main(TestPercolation.java:830)
+
+  * n = 20
+    java.lang.IllegalArgumentException: index -16 is not between 0 and 401
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TestPercolation.checkRandomCalls(TestPercolation.java:543)
+    TestPercolation.test15(TestPercolation.java:760)
+    TestPercolation.main(TestPercolation.java:830)
+
+  * n = 50
+    java.lang.IllegalArgumentException: index -26 is not between 0 and 2501
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TestPercolation.checkRandomCalls(TestPercolation.java:543)
+    TestPercolation.test15(TestPercolation.java:761)
+    TestPercolation.main(TestPercolation.java:830)
+
+==> FAILED
+
+
+Total: 2/15 tests passed!
+
+
+================================================================
+********************************************************************************
+*  TESTING CORRECTNESS (substituting reference Percolation)
+********************************************************************************
+
+Testing correctness of PercolationStats
+*-----------------------------------------------------------
+Running 15 total tests.
+
+Test 1: check that methods in PercolationStats do not print to standard output
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 2: check that mean() returns value in expected range
+  * n =   2, trials = 10000
+  * n =   5, trials = 10000
+  * n =  10, trials = 10000
+  * n =  25, trials = 10000
+==> passed
+
+Test 3: check that stddev() returns value in expected range
+  * n =   2, trials = 10000
+  * n =   5, trials = 10000
+  * n =  10, trials = 10000
+  * n =  25, trials = 10000
+==> passed
+
+Test 4: check that PercolationStats creates trials Percolation objects, each of size n-by-n
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 5: check that PercolationStats calls open() until system percolates
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 6: check that PercolationStats does not call open() after system percolates
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 7: check that mean() is consistent with the number of intercepted calls to open()
+        on blocked sites
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 8: check that stddev() is consistent with the number of intercepted calls to open()
+        on blocked sites
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 9: check that confidenceLo() and confidenceHigh() are consistent with mean() and stddev()
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 10: check that exception is thrown if either n or trials is out of bounds
+  * n = -23, trials =  42
+  * n =  23, trials =   0
+  * n = -42, trials =   0
+  * n =  42, trials =  -1
+  * n = -2147483648, trials = -2147483648
+==> passed
+
+Test 11: create two PercolationStats objects at the same time and check mean()
+         (to make sure you didn't store data in static variables)
+  * n1 =  50, trials1 =  10, n2 =  50, trials2 =   5
+  * n1 =  50, trials1 =   5, n2 =  50, trials2 =  10
+  * n1 =  50, trials1 =  10, n2 =  25, trials2 =  10
+  * n1 =  25, trials1 =  10, n2 =  50, trials2 =  10
+  * n1 =  50, trials1 =  10, n2 =  15, trials2 = 100
+  * n1 =  15, trials1 = 100, n2 =  50, trials2 =  10
+==> passed
+
+Test 12: check that the methods return the same value, regardless of
+         the order in which they are called
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 13: check that no calls to StdRandom.setSeed()
+  * n = 20, trials = 10
+  * n = 20, trials = 10
+  * n = 40, trials = 10
+  * n = 80, trials = 10
+==> passed
+
+Test 14: check distribution of number of sites opened until percolation
+  * n = 2, trials = 100000
+  * n = 3, trials = 100000
+  * n = 4, trials = 100000
+==> passed
+
+Test 15: check that each site is opened the expected number of times
+  * n = 2, trials = 100000
+  * n = 3, trials = 100000
+  * n = 4, trials = 100000
+==> passed
+
+
+Total: 15/15 tests passed!
+
+
+================================================================
+********************************************************************************
+*  MEMORY (substituting reference Percolation)
+********************************************************************************
+
+Analyzing memory of PercolationStats
+*-----------------------------------------------------------
+Running 4 total tests.
+
+Test 1a-1d: check memory usage as a function of T trials for n = 100
+            (max allowed: 8*T + 128 bytes)
+
+                 T        bytes
+--------------------------------------------
+=> passed       16          216         
+=> passed       32          344         
+=> passed       64          600         
+=> passed      128         1112         
+==> 4/4 tests passed
+
+
+Estimated student memory = 8.00 T + 88.00   (R^2 = 1.000)
+
+Total: 4/4 tests passed!
+
+================================================================
+
+
+
+********************************************************************************
+*  TIMING (substituting reference Percolation)
+********************************************************************************
+
+Timing PercolationStats
+*-----------------------------------------------------------
+Running 4 total tests.
+
+Test 1: count calls to StdStats.mean() and StdStats.stddev()
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 2: count calls to methods in StdRandom
+  * n = 20, trials = 10
+  * n = 20, trials = 10
+  * n = 40, trials = 10
+  * n = 80, trials = 10
+==> passed
+
+Test 3: count calls to methods in Percolation
+  * n =  20, trials =  10
+  * n =  50, trials =  20
+  * n = 100, trials =  50
+  * n =  64, trials = 150
+==> passed
+
+Test 4: Call PercolationStats methods with trials = 3 and values of n that go up
+        by a factor of sqrt(2). The test passes when n reaches 2,896.
+
+     The approximate order-of-growth is n ^ (log ratio)
+
+         n  seconds log ratio
+     ------------------------
+       724     0.17       2.3
+      1024     0.41       2.5
+      1448     1.15       2.9
+      2048     2.88       2.6
+      2896     7.34       2.7
+==> passed
+
+
+Total: 4/4 tests passed!
+
+
+================================================================
+
+
+
+********************************************************************************
+*  MEMORY
+********************************************************************************
+
+Analyzing memory of Percolation
+*-----------------------------------------------------------
+Running 4 total tests.
+
+Test 1a-1d: check that total memory <= 17 n^2 + 128 n + 1024 bytes
+
+                 n        bytes
+--------------------------------------------
+    java.lang.IllegalArgumentException: index -61 is not between 0 and 4097
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    MemoryOfPercolation.main(MemoryOfPercolation.java:164)
+
+
+Total: 0/4 tests passed!
+
+================================================================
+
+
+
+********************************************************************************
+*  TIMING
+********************************************************************************
+
+Timing Percolation
+*-----------------------------------------------------------
+Running 16 total tests.
+
+Test 1a-1e: Creates an n-by-n percolation system; open sites at random until
+            the system percolates, interleaving calls to percolates() and open().
+            Count calls to connected(), union() and find().
+
+                                       2 * connected()
+                 n       union()              + find()        constructor
+-----------------------------------------------------------------------------------
+    java.lang.IllegalArgumentException: index -5 is not between 0 and 257
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:75)
+    TimePercolation.timeCoreSubsetOfMethods(TimePercolation.java:64)
+    TimePercolation.test1(TimePercolation.java:339)
+    TimePercolation.main(TimePercolation.java:521)
+
+==> 0/7 tests passed
+
+
+If one of the values in the table violates the performance limits
+the factor by which you failed the test appears in parentheses.
+For example, (9.6x) in the union() column indicates that it uses
+9.6x too many calls.
+
+
+Tests 2a-2f: Check whether the number of calls to union(), connected(), and find()
+             is a constant per call to open(), isOpen(), isFull(), and percolates().
+             The table shows the maximum number of union(), connected(), and
+             find() calls made during a single call to open(), isOpen(), isFull(),
+             and percolates().
+
+                 n     per open()      per isOpen()    per isFull()    per percolates() 
+---------------------------------------------------------------------------------------------
+    java.lang.IllegalArgumentException: index -3 is not between 0 and 257
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:71)
+    TimePercolation.countMaxOperations(TimePercolation.java:137)
+    TimePercolation.test2(TimePercolation.java:399)
+    TimePercolation.main(TimePercolation.java:524)
+
+==> 0/7 tests passed
+
+
+
+Running time (in seconds) depends on the machine on which the script runs.
+
+
+Test 3: Create an n-by-n percolation system; interleave calls to percolates()
+        and open() until the system percolates. The values of n go up by a
+        factor of sqrt(2). The test is passed if n >= 4096 in under 10 seconds.
+
+     The approximate order-of-growth is n ^ (log ratio)
+
+                        log   union-find     log
+         n  seconds   ratio   operations   ratio
+     -------------------------------------------
+    java.lang.IllegalArgumentException: index -3 is not between 0 and 257
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TimePercolation.timeCoreSubsetOfMethods(TimePercolation.java:64)
+    TimePercolation.test3(TimePercolation.java:435)
+    TimePercolation.main(TimePercolation.java:531)
+
+==> FAILED
+
+
+
+Test 4: Create an n-by-n percolation system; interleave calls to open(),
+        percolates(), isOpen(), isFull(), and numberOfOpenSites() until.
+        the system percolates. The values of n go up by a factor of sqrt(2).
+        The test is passed if n >= 4096 in under 10 seconds.
+
+                        log   union-find     log
+         n  seconds   ratio   operations   ratio
+     -------------------------------------------
+    java.lang.IllegalArgumentException: index -10 is not between 0 and 257
+
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.validate(WeightedQuickUnionUF.java:92)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.findNoCount(WeightedQuickUnionUF.java:99)
+    edu.princeton.cs.algs4.WeightedQuickUnionUF.union(WeightedQuickUnionUF.java:122)
+    Percolation.open(Percolation.java:67)
+    TimePercolation.timeAllMethods(TimePercolation.java:94)
+    TimePercolation.test4(TimePercolation.java:484)
+    TimePercolation.main(TimePercolation.java:534)
+
+==> FAILED
+
+
+Total: 0/16 tests passed!
+
+
+================================================================
+
