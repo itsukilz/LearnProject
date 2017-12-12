@@ -374,7 +374,7 @@ public class Stack<Item> implements Iterable<Item>{
 	public Iterator<Item> iterator() {
 		return new ListIterator();
 	}
-	private class ListIterator implement Iterable<Item> {
+	private class ListIterator implements Iterator<Item> {
 		private Node current = first;
 		public boolean hasNext() {
 			return current.next != null;
@@ -447,13 +447,14 @@ public class Stack<Item> implements Iterable<Item>{
 4. `private class ListIterator implements Iterator<Item>` 里只有一个`<Item>` ，不像`public class Bag<Item> implements Iterable<Item>` 里有两个。
 5. `class Node` 里不需要再定一个`private`了。
 6. 插入的时候不要分背包是否为空，如果让`p.next=null`，反而会出错。
+7. Node是用private class
 ```java
 import java.util.Iterator; // 1 
 public class Bag<Item> implements Iterable<Item> {
 	private Node first;
 	private int count;
 	
-	public class Node {
+	private class Node { // 7 private class
 		Item item; 	// 5 不需要再声明private了
 		Node next;
 	}
@@ -531,4 +532,113 @@ public class Dijkstra {
 			else StdOut.println("Wrong exprassion.");
 		}
 }
+```
+#### programming assignment
+##### dequeue
+错误： @错误
+1. `throw new java.lang.IllegalArgumentException(); ` 抛出异常的时候，异常后面要加（）;
+2. 链表的尾部删除结点，就要考虑双向链表。
+3. 循环输出时发现最后一个结点没有输出，因为`last.next=null` 但按照`while(i.hasNext())` 当i时最后一个结点时，i.hasNext()时false，就不会输出。所以改成`oldlast.next=null` .
+```java
+import java.util.Iterator;
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
+public class Dequeue<Item> implements Iterable<Item> {
+	private class Node {
+		Item item;
+		Node next;
+		Node before;  // 2
+	}
+	private Node first;
+	private Node last;
+	private int count;
+	public Dequeue() {
+		first = new Node();
+		last = new Node();
+		count = 0;
+	}
+	public boolean isEmpty() {
+		return count == 0;
+	}
+	public int size() {
+		return count;
+	}
+	public void addFirst(Item item) {
+		if (item == null) throw new java.lang.IllegalArgumentException();  // 1
+		Node p = new Node();
+		p.item = item;
+		p.next = first;
+		first.before = p;
+		first = p;
+		if (count == 0) last = first;
+		count++;
+		// StdOut.println(first.item);
+	}
+	public void addLast(Item item) {
+		if (item == null) throw new java.lang.IllegalArgumentException();
+		Node p = new Node();
+		p.item = item;
+		p.next = null;
+		last.next = p;
+		p.before = last;
+		last = p;
+		if (count == 0) first = last;
+		count++;
+		// StdOut.println(last.item);
+	}
+	public void removeFirst() {
+		if (count == 0) throw new java.util.NoSuchElementException();
+		first = first.next;
+		count--;
+	}
+	public void removeLast() {
+		if (count == 0) throw new java.util.NoSuchElementException();
+		Node oldlast = last;
+		last = last.before;
+		oldlast.next = null;  // 3
+		count--;
+	}
+	private class ListIterator implements Iterator<Item> {
+		private Node current = first;
+		public boolean hasNext() {
+			return current.next != null;
+		}
+
+		public Item next() {
+			Item item = current.item;
+			current = current.next;
+			return item;
+		}	
+		public void remove() {
+			throw new java.lang.UnsupportedOperationException();
+		}
+	}
+	public Iterator<Item> iterator() {
+		return new ListIterator();
+	}
+	public static void main(String[] args) {
+		int s;
+		Dequeue<Integer> stack = new Dequeue<Integer>();
+		while (!StdIn.isEmpty()) {
+			s = StdIn.readInt();
+			if (s>5) stack.addFirst(s);
+			if (s<5 && s != -1 && s != 0) stack.addLast(s);
+			if (s == -1) stack.removeFirst();
+			if (s == 0) stack.removeLast();
+		}
+		for (int k : stack) {
+			StdOut.println(k);
+		}
+
+
+	}
+		
+}
+
+
+
+```
+##### RandomizedQueue
+```java
+
 ```
