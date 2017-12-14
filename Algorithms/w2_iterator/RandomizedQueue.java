@@ -12,6 +12,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	private int count;
 	public RandomizedQueue() {
 		first = new Node();
+		last = new Node();
 		count = 0;
 	}
 
@@ -26,20 +27,44 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 	public void enqueue(Item item) {
 		if (item == null) throw new java.lang.IllegalArgumentException();
 		Node p = new Node();
+		Node empty = new Node();
 		p.item = item;
+		p.next = empty;
 		last.next = p;
 		last = p;
+		if (count == 0) first = last;
 		count++;
 	}
 
 	public Item dequeue() {
 		if (count == 0) throw new java.util.NoSuchElementException();
-		int randomValue = StdRandom.uniform(count);
+		Node before = randomNode();
+		
+		Item item = before.next.item;
+		before.next = before.next.next;
+		return item;
 
-		return out;
+
 	}
-
+	private Node randomNode() {
+		if (count == 1) return first;
+		else {
+			int randomValue = StdRandom.uniform(count-1);
+			int stopCount = 1;
+			Node start = first;
+			Node temp;
+			while (stopCount < randomValue-1) {
+				temp = start.next;
+				start = temp;
+				stopCount++;
+			}
+			return start;
+		}
+	}
 	public Item sample() {
+		if (count == 0) throw new java.util.NoSuchElementException();
+		Node before = randomNode();
+		return before.next.item;		
 
 	}
 
@@ -66,15 +91,16 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 		RandomizedQueue<Integer> stack = new RandomizedQueue<Integer>();
 		while (!StdIn.isEmpty()) {
 			s= StdIn.readInt();
-			if (s>5) stack.addFirst(s);
-			if (s<5 && s != -1 && s != 0) stack.addLast(s);
-			if (s == -1) stack.removeFirst();
-			if (s == 0) stack.removeLast();
+			if (s != -1 && s != 0) stack.enqueue(s);
 		}
 		for (int k : stack) {
 			StdOut.println(k);
 		}
-
-
+		// StdOut.println(stack.dequeue());
+		StdOut.println(stack.sample());
+		for (int k : stack) {
+			StdOut.println(k);
+		}
+		
 	}
 }
