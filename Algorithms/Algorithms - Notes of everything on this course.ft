@@ -14,13 +14,14 @@
 		- randomizedQueue @done(2017-12-13)
 		- client @done(2017-12-14)
 		- 总结 @done(2017-12-15)
-- week2-2
+- week2-2 @done(2017-12-16)
 	- sorting Introduction @done(2017-12-15)
 	- selection sort @done(2017-12-15)
-	- insertion sort
-	- shellsort
-	- shuffling
-	- convex hull
+	- insertion sort @done(2017-12-16)
+	- shellsort @done(2017-12-16)
+	- shuffling @done(2017-12-16)
+	- convex hull @done(2017-12-16)
+- week3-1
 ### assignment 总结
 #### week2
 week2的 assignment 主要训练怎样按照 api 实现data-type。一个可以两头添加和删除的 queue，一个随机返回和删除的 queue，听起来都非常的简单，大概怎么实现也有思路，但真正实现起来就会遇到各种各样的细节问题，或者你会发现你没有理解题意。我现在觉得编程难其实就是难在理解全面、考虑全面上。
@@ -39,7 +40,7 @@ week2的 assignment 主要训练怎样按照 api 实现data-type。一个可以�
 		- 怎么实现 add 方便，随机删除方便，能够独立 random 循环？底层到底用数组还是用 linked list ？
 	- 底层最开始我考虑要随机删除，用 linked list方便(数组中间删除需要重 copy 一份数组)，但 linked list 没有办法满足产生多个 random 循环(只能从 first 开始)。然后我认为独立 random 循环还是应该用数组，那么随机删除用的是把数组打乱一遍，删最后一个，但时间和 memory 都不满足。后来往前再进一步，其实可以随机选一个数组元素，和最后一个交换，然后删最后一个，那么用数组就完美了。(以上这个过程也是试了很多遍)
 虽然每次 assignment 都提交了很多次，写很多遍，改很多遍，我也曾经沮丧于此。但神奇的是我发现我记得很牢固。
-### week2
+### week2-1
 #### stacks
 顺序：定义API，写client(对API的测试函数)，最后implement
 ##### API.todo
@@ -786,7 +787,7 @@ public class Permutation {
 	}
 }
 ```
-### week3
+### week2-2
 - 排序模板
 ```java
 public class Example {
@@ -946,3 +947,23 @@ public class Insertion {
 		}
 	}
 ```
+#### knuth shuffle
+- 目的：如何将一个序列打乱？(洗牌)
+- 一个方式：为每个元素生成一个随机数（random())，将所有随机数排序(sort()）. n+n^2，qudratic
+- 有没有更快的方式：对于每个i，随机选取0-i之间的数r，交换i，r。 n，linear
+```java
+public class Shuffle {
+	public static void KnuthShuffle(Item[] a) {
+		for(int i = 0; i < a.length; i++) {
+			int r = StdRandom.uniform(0,i+1);
+			exch(a,i,r);
+		}
+	}
+}
+
+```
+- 注意：不要在0-N中选随机数，这样产生的shuffle不是uniform的。
+#### convex hull
+- 问题：给定一些散乱的点，求最小能够围住所有点的围栏顶端。
+- 解决：看起来是一个计算几何的问题，其实可以变成排序问题。找到一个p点使所有点之间的夹角最小，以P为圆心，按与p夹角排序，顺时针命名所有点1-n，scan 1-n，从p出发，检测每个点的转折及其后面的转折是否为顺时针，如果不是，则不为convex point。
+### week3-1
