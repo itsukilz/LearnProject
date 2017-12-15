@@ -27,8 +27,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
 	public Item dequeue() {
 		if (count == 0) throw new java.util.NoSuchElementException();
-		StdRandom.shuffle(a,0,count);
-		Item item = a[count-1];
+		int randomValue = StdRandom.uniform(count);
+		Item item = a[randomValue];
+		a[randomValue] = a[count-1];
 		a[count-1] = null;
 		count--;
 		if (count <= a.length/4) resize(a.length/2);
