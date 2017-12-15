@@ -1,5 +1,6 @@
 # Algorithms - Notes of everything on this course
-## 进度.todo
+## 进度
+### 进度.todo
 - week2
 	- stacks @done(2017-12-10)
 	- resizing arrays @done(2017-12-10)
@@ -8,10 +9,17 @@
 	- iteration @done(2017-12-10)
 	- Bag @done(2017-12-10)
 	- stack and queue applications @done(2017-12-11)
-	- programming assignment
+	- programming assignment @done(2017-12-14)
 		- dequeue @done(2017-12-12)
 		- randomizedQueue @done(2017-12-13)
 		- client @done(2017-12-14)
+- week3
+	- sorting Introduction @done(2017-12-15)
+	- selection sort @done(2017-12-15)
+	- insertion sort
+	- shellsort
+	- shuffling
+	- convex hull
 
 ### week2
 #### stacks
@@ -760,3 +768,125 @@ public class Permutation {
 	}
 }
 ```
+### week3
+- 排序模板
+```java
+public class Example {
+	public static void sort(Comparable[] a){
+	// 待填充
+	}
+	private static boolean less(Comparable v, Comparable w) {
+		return v.compareTo(w) < 0;	
+	}
+	private static void exch(Comparable[] a, int i, int j){
+		Comparable t = a[i];
+		a[i] = a[j];
+		a[j] = t;
+	}
+	private static void show(Comparable[] a) {
+		for (int i=0; i<a.length; i++){
+			StdOut.print(a[i]+" ");
+		}
+		StdOut.println();
+ 	}
+ 	public static boolean isSorted(Comparable[] a) {
+		for (int i=0; i<a.length;i++){
+			if (less(a[i],a[i-1])) return false;
+		}
+		return true;
+	}
+	public static void main(String[] args) {
+		String[] a = In.readStrings();
+		sort(a);
+		assert isSorted(a);
+		show(a);
+	}
+
+}
+```
+
+#### sorting Introduction
+1. sorting examples: Double, String, File, it can sort any kind of data.
+2. How can 1 happen? How can sort() know how to compare data of all data type like File ?
+		sort() use callback, sort() function calls back object's compareTo() method. 即数据结构本身是有compareTo()的method，想想一个分数的数据结构，你肯定需要写一个比较两个分数的method。sort()不需要知道每一种数据如何比大小，它只需要在比较大小的时候调用这个method，得到结论即可。
+3. java 如何实现？ java用一个Comparable interface, 所有class 添加了这个interface，实现一个compareTo method（返回值为-1，1，0），然后sort()中就可以直接调用，得到两者比较结果。
+		
+		```java
+			// object  implementation
+			public class File implements Comparable<File> {
+				...
+				public int compareTo(File b) {
+					...
+					return -1;
+					...
+					return 1;
+					...
+					return 0;
+				}
+			}
+			// sort implementation
+			public static void sort(Comparable[] a) {
+				...
+				if (a[i].compareTo(a[j]) < 0)
+					exch(a,i,j);
+			}
+		```
+4. 自己写的data type怎么做？
+	1. 首先，该数据结构的比较逻辑要保证total rule：
+			1. if v <= w, w <= v, then v=w
+			2. if v <= w, w <= x, then v <= x;
+			3. either v <= w, w >= v;
+	2. implements comparable api
+	3. throws an exception if incompatible types or null type;
+5. 怎么验证是否violate(break) total rule ? 题目做错了。	@confused
+
+```java
+public class Temperature implements Comparable<Temperature> {
+    private final double degrees;
+    
+    public Temperature(double degrees) {
+        if (Double.isNaN(degrees))
+            throw new IllegalArgumentException();
+        this.degrees = degrees;
+    }
+
+    public int compareTo(Temperature that) {
+        double EPSILON = 0.1;
+        if (this.degrees < that.degrees - EPSILON) return -1;
+        if (this.degrees > that.degrees + EPSILON) return +1;
+        return 0;
+    }
+    ...
+}
+
+```
+	- 把a.compareTo(b) > 0, a.compareTo(b) < 0, a.compareTo(b) = 0 三种情况的真实a，b写出来。
+		- `a.compareTo(b) < 0` ——> `a < b-0.1`
+		- `a.compareTo(b) > 0` ——> `a > b+0.1`
+		- `a.compareTo(b) = 0` ——> `b + 0.1>= a >= b-0.1`
+	- 逐条验证：
+		1. if v <= w, w <= v, then v=w；
+			a.compareTo(b) <=0 -->  
+#### selection sort
+
+- 核心思想：不断找出i右侧最小的元素，和a[i]交换。
+```java
+public class Selection {
+// 其余直接用example的代码
+	public static void sort(comparable[] a) {
+		int i = 0;
+		while (i < a.length) {
+			int min = i;
+			for (int j = i+1; j<a.length; j++) {
+				if (less(a[j], a[min]))
+					min = j;			
+			}
+			exch(a,i,min);
+			i++;
+		}
+	}	
+}
+
+```
+- 调用次数：less需要调用(n-1)+(n-2)+...+0 ~ n^2次，exch很简单，n次。
+- 时间：quadratic time. 最好情况是already sorted，no exch, but still needs n^2 to find.
