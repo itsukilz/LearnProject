@@ -890,3 +890,22 @@ public class Selection {
 ```
 - 调用次数：less需要调用(n-1)+(n-2)+...+0 ~ n^2次，exch很简单，n次。
 - 时间：quadratic time. 最好情况是already sorted，no exch, but still needs n^2 to find.
+#### insertion sort
+- 核心思想：往左冒泡，如果less(i,left),exch(i,left),直到停下来or到顶。
+```java
+public class Insertion {
+	public static void sort(Comparalbe[] a) {
+		for (int i = 0; i<a.length; i++) {
+			for (int j=i; j>0; j--) {
+				if (less(a[j],a[j-1]))
+					exch(a,j,j-1);
+				else break;
+			}
+		}
+	}
+}
+```
+- 调用次数：
+	- 最优：already sorted。N-1 less， 0 exch
+	- 最坏：descend sorted。1/2 n^2 less, 1/2 n^2 exch.
+- partially-sorted arrays
