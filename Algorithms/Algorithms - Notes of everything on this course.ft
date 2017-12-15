@@ -1,7 +1,7 @@
 # Algorithms - Notes of everything on this course
 ## 进度
 ### 进度.todo
-- week2
+- week2-1 @done(2017-12-15)
 	- stacks @done(2017-12-10)
 	- resizing arrays @done(2017-12-10)
 	- queues @done(2017-12-10)
@@ -13,14 +13,32 @@
 		- dequeue @done(2017-12-12)
 		- randomizedQueue @done(2017-12-13)
 		- client @done(2017-12-14)
-- week3
+		- 总结 @done(2017-12-15)
+- week2-2
 	- sorting Introduction @done(2017-12-15)
 	- selection sort @done(2017-12-15)
 	- insertion sort
 	- shellsort
 	- shuffling
 	- convex hull
+### assignment 总结
+#### week2
+week2的 assignment 主要训练怎样按照 api 实现data-type。一个可以两头添加和删除的 queue，一个随机返回和删除的 queue，听起来都非常的简单，大概怎么实现也有思路，但真正实现起来就会遇到各种各样的细节问题，或者你会发现你没有理解题意。我现在觉得编程难其实就是难在理解全面、考虑全面上。
 
+一个体验是，往往我题意没有完全理解透就开始写代码了，此时错误很多；但当我推翻重写一遍的时候，第二遍对题意的理解就好多了，很多细节也能够注意到了。
+- Deque
+	- 理解题意：一个可以两头添加和删除的 queue。这里出现的错误有：
+		1. 把类名记错了，以为是 Dequeue, 其实是 Deque
+		2. 把 API 记错了，removeFirst removeLast 都需要返回，但写的时候写成了 void。
+	- add 的时候，没有仔细考虑此时queue 为空的情况。如果此时 queue 为空，first、last其实都是 null，如果用 first.before 之类的，会报空指针错误。
+	- remove 的时候，怎样除去 loiter？ 其实就是把所有指向这个 node 的指针都置null 就行(斩断所有链接)，而且要考虑 first 和 last 是否为空，并且由于这里是双向链表，next 和 before 都要考虑到。
+	- 循环什么时候判断 hasNext()? 之前一直都写 current.next != null,  但其实直接写 current != null 就行了。
+- RandomizedQueue
+	- 理解题意：一个随机返回和删除的 queue。特别需要的是：
+		- iterator() return an independent iterator over items in random order。每个 iterator 要是一个独立的 random 循环器。
+		- 怎么实现 add 方便，随机删除方便，能够独立 random 循环？底层到底用数组还是用 linked list ？
+	- 底层最开始我考虑要随机删除，用 linked list方便(数组中间删除需要重 copy 一份数组)，但 linked list 没有办法满足产生多个 random 循环(只能从 first 开始)。然后我认为独立 random 循环还是应该用数组，那么随机删除用的是把数组打乱一遍，删最后一个，但时间和 memory 都不满足。后来往前再进一步，其实可以随机选一个数组元素，和最后一个交换，然后删最后一个，那么用数组就完美了。(以上这个过程也是试了很多遍)
+虽然每次 assignment 都提交了很多次，写很多遍，改很多遍，我也曾经沮丧于此。但神奇的是我发现我记得很牢固。
 ### week2
 #### stacks
 顺序：定义API，写client(对API的测试函数)，最后implement
