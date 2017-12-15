@@ -56,22 +56,30 @@ public class Deque<Item> implements Iterable<Item> {
 		Node oldfirst = first;
 		first = first.next;
 		count--;
-		return oldfirst.item;
+		Item item = oldfirst.item;
+		oldfirst = null;
+		if (count == 0) last = first;
+		return item;
 	}
 	public Item removeLast() {
 		if (count == 0) throw new java.util.NoSuchElementException();
 		Node oldlast = last;
 		last = last.before;
 		count--;
-		return oldlast.item;
+		Item item = oldlast.item;
+		if (count == 0) first = last;
+		else last.next = null;
+		return item;
 	}
 	private class ListIterator implements Iterator<Item> {
 		private Node current = first;
 		public boolean hasNext() {
-			return current != null;
+			if (count == 0) return false;
+			else return current != null;
 		}
 
 		public Item next() {
+			if (current == null) throw new java.util.NoSuchElementException();
 			Item item = current.item;
 			current = current.next;
 			return item;
@@ -86,13 +94,16 @@ public class Deque<Item> implements Iterable<Item> {
 	public static void main(String[] args) {
 		int s;
 		Deque<Integer> stack = new Deque<Integer>();
-		StdOut.println(stack.isEmpty());
 		stack.addFirst(8);
-		StdOut.println(stack.size());
+		stack.addLast(9);
+		stack.removeLast();
+		int count = 0;
 		for(int k : stack) {
 			StdOut.println(k);
+			count++;
 		}
-
+		// StdOut.println(count);
+		// StdOut.println(stack.size());
 	}
 		
 }
