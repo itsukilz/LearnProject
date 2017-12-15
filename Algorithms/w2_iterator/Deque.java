@@ -59,6 +59,7 @@ public class Deque<Item> implements Iterable<Item> {
 		Item item = oldfirst.item;
 		oldfirst = null;
 		if (count == 0) last = first;
+		else first.before = null;
 		return item;
 	}
 	public Item removeLast() {
