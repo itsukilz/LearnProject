@@ -22,6 +22,7 @@
 	- shuffling @done(2017-12-16)
 	- convex hull @done(2017-12-16)
 - week3-1
+	- Mergesort
 ### assignment 总结
 #### week2
 week2的 assignment 主要训练怎样按照 api 实现data-type。一个可以两头添加和删除的 queue，一个随机返回和删除的 queue，听起来都非常的简单，大概怎么实现也有思路，但真正实现起来就会遇到各种各样的细节问题，或者你会发现你没有理解题意。我现在觉得编程难其实就是难在理解全面、考虑全面上。
@@ -967,3 +968,42 @@ public class Shuffle {
 - 问题：给定一些散乱的点，求最小能够围住所有点的围栏顶端。
 - 解决：看起来是一个计算几何的问题，其实可以变成排序问题。找到一个p点使所有点之间的夹角最小，以P为圆心，按与p夹角排序，顺时针命名所有点1-n，scan 1-n，从p出发，检测每个点的转折及其后面的转折是否为顺时针，如果不是，则不为convex point。
 ### week3-1
+#### Mergesort
+##### merge：两个有序子数组如何merge成一个有序的数组？
+- 核心思想：复制一个aux数组，从两个子数组的头部开始比较，谁小谁填进a；
+- 注意1：要执行assert 需要`java-algs4 -ea Merge < alpha.txt` 这是用来调试的。默认直接`java-algs4 Merge < alpha.txt` == `java-algs4 -da Merge < alpha.txt`，即不会执行assert。
+- 注意2：这里的isSorted需要重写。
+```java
+	public static void merge(Comparable[] a, int lo, int mid, int hi){
+		assert isSorted(a,lo,mid);
+		assert isSorted(a,mid+1,hi);
+		aux = new Comparable[a.length];
+		for (int k=lo; k<=hi; k++) {
+			aux[k] = a[k];
+		}
+		int i = lo; int j = mid+1;
+		for (int k=lo; k<=hi; k++) {
+			if (i<= mid && j<=hi) {
+				if (less(aux[i],aux[j])) {
+					a[k] = aux[i];
+					i++;
+				}
+				else {
+					a[k] = aux[j];
+					j++;
+				}
+			}
+			else if (i>mid && j <= hi){
+				a[k] = aux[j];
+				j++;
+			}
+			else if (i <= mid && j > hi){
+				a[k] = aux[i];
+				i++;
+			}
+		}
+		assert isSorted(a,lo,hi);
+	}
+```
+
+##### 用merge来sort；
