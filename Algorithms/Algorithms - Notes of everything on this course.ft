@@ -974,10 +974,64 @@ public class Shuffle {
 - 注意1：要执行assert 需要`java-algs4 -ea Merge < alpha.txt` 这是用来调试的。默认直接`java-algs4 Merge < alpha.txt` == `java-algs4 -da Merge < alpha.txt`，即不会执行assert。
 - 注意2：这里的isSorted需要重写。
 ```java
-	public static void merge(Comparable[] a, int lo, int mid, int hi){
+	public static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int hi){
 		assert isSorted(a,lo,mid);
 		assert isSorted(a,mid+1,hi);
-		aux = new Comparable[a.length];
+		for (int k=lo; k<=hi; k++) {
+			aux[k] = a[k];
+		}
+		int i = lo; int j = mid+1;
+		for (int k=lo; k<=hi; k++) {
+			if (i<= mid && j<=hi) {
+				if (less(aux[i],aux[j])) {
+					a[k] = aux[i];
+					i++;
+				}
+				else {
+					a[k] = aux[j];
+					j++;
+				}
+			}
+			else if (i>mid && j <= hi){
+				a[k] = aux[j];
+				j++;
+			}
+			else if (i <= mid && j > hi){
+				a[k] = aux[i];
+				i++;
+			}
+		}
+		assert isSorted(a,lo,hi);
+	}
+```
+##### 用merge来sort；分治想法
+- 核心思想：divide and conquer。一个无序数组我只要分两半，各自排序，就能merge成一个有序数组。那么每一个需要排序的子数组我都分两半，分别排序，然后merge。
+- 重要知识：递归怎么写？递归很容易考虑的很复杂不知道怎么下手，为了降低复杂度，首先考虑表面：
+	- 无序数组分两半，a进来，找到两半在的中间 `int mid = (hi-lo)/2+lo`；
+	- 各自排序，分别调用自己排序 `sort(a, lo, mid); sort(a, mid+1, hi);`
+	- 然后merge成有序 `merge(a, aux, lo, mid, hi);`
+	- 什么时候停止？不再往下继续分？ 当分到只有一个元素的时候，`lo==hi, mid == lo` 那么在前半部是`hi==lo` 在后半部是`hi<lo` 综合起来是`hi<=lo`。 什么叫不再往下分？就return停止。`if (hi<=lo) return`
+```java
+// 以上这部分综合起来就是：
+private static void sort(Comparable[] a, int lo, int hi) {
+	if (hi <= lo) return;
+	int mid = (hi-lo)/2 + lo;
+	sort(a, lo, mid); 
+	sort(a, mid+1, hi);
+	merge(a, aux, lo, mid, hi);
+}
+
+// 但由于数组进来的时候不可能带着lo和hi，需要一个外部接口只接受数组a
+public static void sort(Comparable[] a) {
+	// 此时知道了a数组的长度，可以复制一个数组aux
+	aux = new Comparable[a.length];
+	sort(a,0,a.length);
+}
+
+// merge部分见上一小节代码
+public static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int hi) {
+		assert isSorted(a,lo,mid);
+		assert isSorted(a,mid+1,hi);
 		for (int k=lo; k<=hi; k++) {
 			aux[k] = a[k];
 		}
@@ -1006,4 +1060,3 @@ public class Shuffle {
 	}
 ```
 
-##### 用merge来sort；
