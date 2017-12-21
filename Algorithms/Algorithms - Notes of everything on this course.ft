@@ -1004,6 +1004,14 @@ public class Shuffle {
 		assert isSorted(a,lo,hi);
 	}
 ```
+##### assertion的用法
+assertion有两个好处：
+1. help debug the code。在模块化编程的时候，一个bug可能需要追查n个每个函数，但如果函数输入后都assert一下，能帮助了解到底哪个环节出了问题。我们可以直接把assert代码放入生产代码，因为生产环节时assertion不会启动，不会带来额外消耗，但如果有问题可以直接启动assert来查错。
+2. Document code。 可以表达：我希望这个函数输入应该是xxx, 完了之后应该是xxx。帮助自己和后来者看代码时理解代码作用。
+用法：
+1. assert xxxx  **throws exception unless boolean condition is true.**
+2. java -ea MyPorgram **enable assertion**
+3. java -da MyProgram/ java Myprogram  **disable assertion**
 ##### 用merge来sort；分治想法
 - 核心思想：divide and conquer。一个无序数组我只要分两半，各自排序，就能merge成一个有序数组。那么每一个需要排序的子数组我都分两半，分别排序，然后merge。
 - 重要知识：递归怎么写？递归很容易考虑的很复杂不知道怎么下手，为了降低复杂度，首先考虑表面：
@@ -1059,4 +1067,12 @@ public static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int 
 		assert isSorted(a,lo,hi);
 	}
 ```
-
+##### 时间消耗和空间消耗
+- insertion sort  N^2    billions years
+- mergesort NlogN		billions 18 mins
+所以quadratic算法是不行的..
+6NlogN array access to sort any array of size N.
+##### 怎么计算时间复杂度
+- 重要经验：1. 我把哪个语句的运行作为单位时间？找到这个语句。2. 找一个好的抽象表示程序运行，不然会容易混乱，比如说树就能很好的表达分治类型的算法。3. 从简单做起，给自己举例子，比如mergesort，就给自己举a[0,15]这个例子，画出树，一点点分析。然后归纳规律。
+1. 关键语句是什么：less(a[j],a[i])，比较语句。当我找到比较语句时，会发现一次merge的比较次数即为这次merge范围内的数组长度。比如merge(a,aux,0,7)，其实就比较了8次。再往上分析，sort()本身是不运行比较语句的，sort()本质上就是安排merge，所以核心就在于长度为N的数组，一共有几次merge，每次merge的长度是多少。
+2. 举个例子a[0,15]，画一个树出来。这个树有几层？代表会二分几次——n=logN层，(0-n-1)中第k层有几个节点？ 2^k, 这一层每个节点的数组长度是什么？ 2^(n-k), 那么`每层总merge长度 2^k * 2^(n-k) = 2^n`, 一共有n层，`总merge长度即比较次数=n*2^n = NlogN`
