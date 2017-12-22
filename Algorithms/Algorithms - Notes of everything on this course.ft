@@ -22,7 +22,8 @@
 	- shuffling @done(2017-12-16)
 	- convex hull @done(2017-12-16)
 - week3-1
-	- Mergesort
+	- Mergesort @done(2017-12-22)
+	- Bottom-up mergesort @done(2017-12-22)
 ### assignment 总结
 #### week2
 week2的 assignment 主要训练怎样按照 api 实现data-type。一个可以两头添加和删除的 queue，一个随机返回和删除的 queue，听起来都非常的简单，大概怎么实现也有思路，但真正实现起来就会遇到各种各样的细节问题，或者你会发现你没有理解题意。我现在觉得编程难其实就是难在理解全面、考虑全面上。
@@ -1072,7 +1073,105 @@ public static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int 
 - mergesort NlogN		billions 18 mins
 所以quadratic算法是不行的..
 6NlogN array access to sort any array of size N.
-##### 怎么计算时间复杂度
-- 重要经验：1. 我把哪个语句的运行作为单位时间？找到这个语句。2. 找一个好的抽象表示程序运行，不然会容易混乱，比如说树就能很好的表达分治类型的算法。3. 从简单做起，给自己举例子，比如mergesort，就给自己举a[0,15]这个例子，画出树，一点点分析。然后归纳规律。
-1. 关键语句是什么：less(a[j],a[i])，比较语句。当我找到比较语句时，会发现一次merge的比较次数即为这次merge范围内的数组长度。比如merge(a,aux,0,7)，其实就比较了8次。再往上分析，sort()本身是不运行比较语句的，sort()本质上就是安排merge，所以核心就在于长度为N的数组，一共有几次merge，每次merge的长度是多少。
+##### 怎么计算时间复杂度-用比较语句衡量
+- 重要经验：1. 我把哪个语句的运行作为单位时间？找到这个语句。2. 找一个好的抽象表示程序运行，不然会容易混乱，比如树就能很好的表达分治类型的算法。3. 从简单做起，给自己举例子，比如mergesort，就给自己举a[0,15]这个例子，画出树，一点点分析。然后归纳规律。
+1. 关键语句是什么：less(a[j],a[i])，比较语句。一次merge数组长度为n。比如merge(a,aux,0,7)，其实就比较了8次。再往上分析，sort()本身是不运行比较语句的，sort()本质上就是安排merge，所以核心就在于长度为N的数组，一共有几次merge，每次merge的长度是多少。
 2. 举个例子a[0,15]，画一个树出来。这个树有几层？代表会二分几次——n=logN层，(0-n-1)中第k层有几个节点？ 2^k, 这一层每个节点的数组长度是什么？ 2^(n-k), 那么`每层总merge长度 2^k * 2^(n-k) = 2^n`, 一共有n层，`总merge长度即比较次数=n*2^n = NlogN`
+##### 怎么计算时间复杂度-用访问数组次数衡量
+1. 关键语句是什么：访问数组的语句，a[i],aux[i]。当我找到比较语句时，会发现一次merge范围内的数组长度a，复制a、aux访问了2a次，比较一次访问了2a次，复制一次访问了2a次，一共6a次。
+2. 举个例子a[0,15]，画一个树出来。这个树有几层？代表会二分几次——n=logN层，(0-n-1)中第k层有几个节点？ 2^k, 这一层每个节点的数组长度是什么？ 2^(n-k), 那么`每层总merge长度 2^k * 2^(n-k) = 2^n`, 一共有n层，`总merge长度NlogN，访问数组6NlogN。`
+##### 怎么计算空间复杂度
+1. 怎么去衡量空间复杂度：程序一共用了多少单位的储存空间(一般是数组/链表)。在mergesort里我一共用了2个N数组。
+##### improvement1：如果两个有序子数组已经是整体有序的，就跳过
+```java
+// the last(biggest) item of first subarray is smaller than the first(smallest) item of the second subarray.
+private static void sort(Comparable[] a, int lo, int hi) {
+	if (hi <= lo) return;
+	int mid = (hi-lo)/2 + lo;
+	sort(a, lo, mid); 
+	sort(a, mid+1, hi);
+	if (less(a[mid],a[mid+1])) return;  // add this line
+	merge(a, aux, lo, mid, hi);
+}
+```
+##### improvement2：如果需要排序的子数组长度小于7，直接用insertion sort
+```java
+// mergesort在小规模数组上调用过于频繁。
+private static void sort(Comparable[] a, int lo, int hi) {
+	if (hi <= lo) return;
+	if (hi - lo <= 7) {
+		Insertionsort(a, lo, hi);
+		return;
+	}
+	int mid = (hi-lo)/2 + lo;
+	sort(a, lo, mid); 
+	sort(a, mid+1, hi);
+	if (less(a[mid],a[mid+1])) return;  // add this line
+	merge(a, aux, lo, mid, hi);
+}
+```
+##### improvement3: 用一个空aux进行排序，不用复制aux，直接得到一个有序的aux，再和a merge ？？？
+```java
+public static void sort(Comparable[] a) {
+	// 此时知道了a数组的长度，可以复制一个数组aux
+	aux = new Comparable[a.length];
+	sort(a,0,a.length);
+}
+
+private static void sort(Comparable[] a, Comparable[] aux,int lo, int hi) {
+	if (hi <= lo) return;
+	int mid = (hi-lo)/2 + lo;
+	sort(aux, a, lo, mid); 
+	sort(aux, a, mid+1, hi);
+	merge(a, aux, lo, mid, hi);
+}
+
+// merge部分见上一小节代码
+public static void merge(Comparable[] a, Comparable[] aux, int lo, int mid, int hi) {
+		assert isSorted(a,lo,mid);
+		assert isSorted(a,mid+1,hi);
+		// for (int k=lo; k<=hi; k++) {
+		// 	aux[k] = a[k];
+		// }
+		int i = lo; int j = mid+1;
+		for (int k=lo; k<=hi; k++) {
+			if (i<= mid && j<=hi) {
+				if (less(a[i],a[j])) {
+					aux[k] = a[i];
+					i++;
+				}
+				else {
+					aux[k] = a[j];
+					j++;
+				}
+			}
+			else if (i>mid && j <= hi){
+				aux[k] = a[j];
+				j++;
+			}
+			else if (i <= mid && j > hi){
+				aux[k] = a[i];
+				i++;
+			}
+		}
+		assert isSorted(a,lo,hi);
+	}
+```
+#### Bottom-up mergesort
+- 核心思想：递归的过程是从整体一直二分到最小粒度(1个元素)，再往上merge。我们可以直接从最小粒度开始往上merge，就不用递归了。(其实这个实现起来更简单也更符合直觉。)
+```java
+private static void sort2(Comparable[] a) {
+		for (int size = 2; size < a.length; size = size*2) {
+			for (int i = 0; i < a.length; i = i+size) {
+				int l = i;
+				int h = Math.min(i+size-1,a.length-1);
+				int mid = (h-l)/2+l;
+				merge(a, aux, l, mid, h); 
+			}
+		}
+		merge(a,aux,0,(a.length-1)/2,(a.length-1));
+		assert isSorted(a,0,a.length-1);
+	}
+```
+- 时间复杂度：
+	并没有变，仍然需要考虑merge的总长度——`每个节点的数组长度`2^(n-k) * `每层的节点数`2^(k) * `有多少层`n = 2^n*n = `NlogN`
