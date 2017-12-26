@@ -24,6 +24,10 @@
 - week3-1
 	- Mergesort @done(2017-12-22)
 	- Bottom-up mergesort @done(2017-12-22)
+	- sorting complexity  @done(2017-12-24)
+	- comparators @done(2017-12-24)
+	- Stability @done(2017-12-24)
+	- Programming assignment
 ### assignment 总结
 #### week2
 week2的 assignment 主要训练怎样按照 api 实现data-type。一个可以两头添加和删除的 queue，一个随机返回和删除的 queue，听起来都非常的简单，大概怎么实现也有思路，但真正实现起来就会遇到各种各样的细节问题，或者你会发现你没有理解题意。我现在觉得编程难其实就是难在理解全面、考虑全面上。
@@ -1175,3 +1179,64 @@ private static void sort2(Comparable[] a) {
 ```
 - 时间复杂度：
 	并没有变，仍然需要考虑merge的总长度——`每个节点的数组长度`2^(n-k) * `每层的节点数`2^(k) * `有多少层`n = 2^n*n = `NlogN`
+#### sorting complexity
+##### computational complexity
+- what：framwork to know efficiency of algorithms for solving a particular problem x. 如何衡量解决一个问题不同方法的效率？对于这一个模型建立一个framework，用这个framework去衡量多个算法。
+	- model of computation: allowable operations. @confused
+	- cost model: operation counts.
+	- upper bound. cost guarantee provided by some algorithms for x.
+	- lower bound. proven limit on cost guarantee of *all algorithms for x*.
+	- optimal algorithms: Algorithm with best possible cost guarantee for x. *lower bound == upper bound* 
+##### sorting complexity
+- what:
+	- x : sorting problem
+	- model of computation:  decision tree
+	- cost model : compare operation counts
+	- upperbound: mergesort NlogN
+	- lower bound: 可以通过证明得到——log(N!) ~ NlogN，**所有基于比较的sort算法最坏情况下限**
+- how: 书上有证明
+- 重点信息
+		1. 为什么要有computational complexity？ 希望对某一类问题有一个上限和下限的了解，帮助实际工作中的决策。比如我们了解到所有基于比较的sort算法比较次数最少都需要log(N!)次，那么就不会试图去研究一个比较次数小于log(N!)的算法。(类似于：知道永动机是不可能实现的，那么就不会试图去研究。) 比如我们知道这个算法在某些cost model下最优，但在另外是cost model下不是最优，可以指导我们研发更好的算法。
+		2. lower bound代表什么？最好情况也需要这么多。
+		3. upper bound代表什么？某些已知算法的最坏情况。
+		4. optimal algorithm 为什么是*lower bound == upper bound* 的算法？ 当一个算法最坏情况是这个问题最好情况时，就证明它是最优算法。
+		5. algorithm design的目标：找到optimal algorithm算法。
+- 需要注意的是：最优算法是依赖评价标准的——即cost model。比如cost model是比较次数，比较次数最少的是mergesort，但如果用space usage来衡量，mergesort就不是最优算法。
+#### compartors
+- what: data type内置的比较方法就靠comparable interface，它对外提供几个固定的比较方法（各种comparator order)，然后在数据类型里内置这些方法的实现。我们不需要数据类型的细节，也可以用不同的order来比较。
+- 举例：student 可以通过名字来比较，可以通过section(group)来比较。那么我们可以在sort里用这些不同的compartor来排序。
+```java
+public class Student {
+	public static final Comparator<Student> BY_NAME = new ByName()
+	public static final Comparator<Student> BY_SECTION = new BySection()
+	private final String name;
+	private final int section;
+	.....
+	private static class ByName implements Comparator<Student> {
+		public int compare(Student v, Student w) {
+			return v.name.compareTo(w.name);
+		}
+	}
+	private static class BySection implements Comparator<Student> {
+		public int compare(Student v, Student w) {
+			return v.section - w.section;
+		}
+	}
+}
+
+// 使用举例：用ByName() order去对array a 排序。
+Insertion.Sort(a, new Student.ByName());
+```
+#### Stability
+- what is Stability of sort？if the sort algorithm can perserve the relative order of items with equal keys. 
+- 举例说明：一列学生的信息，by name sorted。那么当我再用by section sort的时候，我会发现同一个section里(即 equal key)的排序并没有保持之前by name的排序。
+- which sorts are stable ? Insertion sort and mergesort. (not selection sort ro shellsort).
+- note: carefully check code 
+- 什么样的算法stable？ equal items never move past each other。
+##### 遍历所有的sort算法来看是否stable
+我的标准应该是，对B1, B2, A，是否排序完是 A B1 B2
+1. selection： 对a[i]，在i~a.length-1中找到最小的，和a[i]进行交换。排序完是：A B2 B1.
+2. insertion：对a[i]，在0~i中找到比它小的，插在其后。排序完是：A B1 B2.
+3. shell sort：对a[i]，在间隔为h中找到比它小的，插在其后，h从7，4，1递减。比如 B1 B2 B3 B4 A，间隔为4，排完序是：A B2 B3 B4 B1。
+4. mergesort：B1 B2 B3 A ---- B1 B2 A B3 ---- A B1 B2 B3.
+所以只有selection sort 和 mergesort符合stable标准。
