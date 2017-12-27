@@ -53,4 +53,31 @@ double的精确度局限：`2.3154543795792453` 只能储存加小数点的*18�
 > Not every java program needs to get interactive input from a human using the keyboard, so this is not part of the core of the java language.
 > program language = small core language + a lot of optional libraries
 
-所以当我们需要使用某个不再core language中提供的功能时，我们import library。
+所以当我们需要使用某个不再core language中提供的功能时，我们需要import library。
+```java
+import java.util.Scanner;
+// import library/jar包名.类名
+
+import java.util.Scanner;
+
+public class ForgetfulMachine {
+	public static void main ( String[] args) {
+		Scanner keyboard = new Scanner(System.in);
+		// 新建一个Scanner类的对象 keyboard, 并且初始化（参数为System.in)， the Scanner object named keyboard 
+		System.out.println( "What city is the capital of France?" );
+		String p = keyboard.next();
+		System.out.println( "I think maybe " + p + " is the capital of France.");
+		
+		System.out.println( "What is your age?" );
+		int age = keyboard.nextInt();
+		System.out.println( "I am " + age + " years old.");
+
+		System.out.println( "What is pi?" );
+		double pi = keyboard.nextDouble();
+		System.out.println( "pi is " + pi + ".");
+	}
+}
+```
+- `keyboard.next()` 把键盘输入的存成String
+- `keyboard.nextInt()` 把键盘输入的转化为int
+- `keyboard.nextDouble()` 把键盘输入的转化为double
