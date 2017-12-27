@@ -1,0 +1,56 @@
+# E1
+## symbols
+- `()` parentheses, open paren`(` and close paren`)`
+- `[]` brackets, square brackets, left bracket`[` and right bracket`]`
+- `{}` braces, curly braces, 
+- `"` quotation mark, quote. open quote and colse quote
+- `;` semicolon
+# E3
+## print and println
+Q: 以下这段代码会输出什么？
+```java
+		System.out.print( "Echo" );
+		System.out.print( "Foxtrot" );
+		System.out.println( "Golf" );
+		System.out.print( "Hotel" );
+		System.out.println();
+		System.out.println( "India" );
+```
+A: 难点在于Golf会在哪里输出。想象一下：`EchoFoxtrot`输完之后，光标在`t`后面，此时输出`Golf\n` 那么`Hotel`虽然是print但它出现在下一行。
+重点：**输出的地方由上一个结束后的光标决定，println会多输出一个`\n`**
+
+Q: 以下这段代码会输出什么？
+`System.out.println( "This" + " " + "is" + " " + "a" + " test." );`
+A: java和python一样可以用`+`直接拼接（concatenation）字符串。
+# E4
+## escape character `\`
+Q：如何在println中输出`""`？
+A: 使用escape charactre，Java是`\`
+```java
+\t
+\n
+\\ ----> \
+\" ----> "
+```
+## comments
+使用 `\\ ` 作为注释开头。
+
+# E5
+## variables
+> variables refer to the location that holds a value.
+
+变量指向的是一个*地址*，而*不是value本身*。
+**declare**： 分配一个地址，给它一个名字(变量名)，分配储存空间(date type)
+**initialize**：给这个变量指向的地址赋值。
+
+基础变量：int, double, String
+double的精确度局限：`2.3154543795792453` 只能储存加小数点的*18位*。
+精确度转换: int * double = double ， int / double = double,  int / int = int ；
+强制类型转换会损失精确度。
+
+# E7
+## import
+> Not every java program needs to get interactive input from a human using the keyboard, so this is not part of the core of the java language.
+> program language = small core language + a lot of optional libraries
+
+所以当我们需要使用某个不再core language中提供的功能时，我们import library。
