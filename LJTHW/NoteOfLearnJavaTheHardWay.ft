@@ -48,7 +48,7 @@ double的精确度局限：`2.3154543795792453` 只能储存加小数点的*18�
 精确度转换: int * double = double ， int / double = double,  int / int = int ；
 强制类型转换会损失精确度。
 
-# E7
+# E7、E8
 ## import
 > Not every java program needs to get interactive input from a human using the keyboard, so this is not part of the core of the java language.
 > program language = small core language + a lot of optional libraries
@@ -78,6 +78,56 @@ public class ForgetfulMachine {
 	}
 }
 ```
-- `keyboard.next()` 把键盘输入的存成String
-- `keyboard.nextInt()` 把键盘输入的转化为int
-- `keyboard.nextDouble()` 把键盘输入的转化为double
+- `keyboard.next()` *等待键盘输入*，把键盘输入的存成String
+- `keyboard.nextInt()` *等待键盘输入*，把键盘输入的转化为int
+- `keyboard.nextDouble()` *等待键盘输入*，把键盘输入的转化为double
+- 换言之，Scanner object有很多methods，如果需要使用这些methods，需要事先用class new一个新object出来，再通过这个object使用这些methods。
+- *等待键盘输入*，意味着程序会中断，等待键盘输入完后再继续。
+
+# E10
+## declare and initialize
+本题讲顺序，因为java不像Python一样不需要declare。所以必然需要先declare，initialize，再使用。如果忘记initiize或者使用在initialize之前，就会报错。
+
+# E11
+## 等号的意义
+等号的意义在于——把右边赋给左边。
+
+# E13
+## comparing strings
+不能用 `= < >` 这些来比较string（compare的时候会报错），要用string自己的comparator。
+`"horse".equals("horse")`
+
+# E14
+## Compound boolean Expressions
+`&& and` A和B都真才真；
+`|| OR ` A 和 B都假才假；
+## bitwise operators-& |
+`3|5 = 7	3&5 = 1`
+
+# E15
+## if clause
+注意 if( ) 后面有括号就行了。
+并且注意，if- if-if 和 if-elseif-elseif是不一样的。后者如果有其中一个满足了条件，就不会再继续check后续条件。但前者会检验每一个条件是否满足，满足就会执行if里的语句。
+
+# E16
+## if后面没有`{}`的情况
+```java 
+public class ComparingNumbers {
+	public static void main(String[] args) {
+		if ( 1 == 2)
+	    		System.out.println( "NOT EQUAL TO");
+	    		System.out.println( "Hey." );
+		if ( 1 != 2)
+	    		System.out.println( "NOT EQUAL TO");
+	    		System.out.println( "Hey." );
+	}
+	
+}
+```
+
+输出的是：
+```
+Hey.
+NOT EQUAL TO
+Hey.
+```
