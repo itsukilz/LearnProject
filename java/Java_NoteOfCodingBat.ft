@@ -1,3 +1,18 @@
+# 进度.todo
+- warmup*2 @done(2017-12-28)
+- string1 @done(2017-12-28)
+- array1 @done(2018-01-01)
+- logic1,logic2 @done(2018-01-01)
+- map1,map2 @done(2018-01-01)
+- functional 1 @done(2018-01-01)
+- string2 @done(2018-01-01)
+- string3
+- functional2
+- array2
+- array3
+- ap1
+- recursion1
+- recursion2
 # Warmup-1 
 ## notString
 - Given a string, return a new string where "not " has been added to the front. However, if the string already begins with "not", return the string unchanged. Note: use .equals() to compare 2 strings.
@@ -81,3 +96,52 @@ comboString("aaa", "b") → "baaab"
 ```
 ## atFirst
 - 还是那个问题，如果有if-else if-else if ，一定要有个else，覆盖return。
+# Logic-1
+## lessBy10
+题意理解特别重要,`if one of them is 10 or more less than one of the others.` 是什么意思？
+断句应该是`if one of them is 10 or more, less than one of the others.`
+## sumLimit
+- 如何计算一个int值的长度？
+- 转化成string，再算该string的长度。`String.valueOf(x).length();`
+# Map-1
+```java
+map.containsKey(key); // return false or true;
+map.put(key,value); //赋值
+map.get(key) //取值 or null
+map.remove(key) //removes the key
+```
+# Map-2
+## word0
+1. 如何新建一个map？
+要确定map的key和value的类型。`Map<String,Integer> map = new HashMap<String,Integer> ();`
+
+2. 如何循环一个数组？
+如果不需要重新修改strings，用`for(String s : strings) `
+如果需要重新修改strings，用`for(int i=0; i<strings.length; i++)`
+# Functional-1
+## doubling
+- list.replaceAll()
+```java
+public List<Integer> doubling(List<Integer> nums) {
+  nums.replaceAll(n -> n * 2);
+  return nums;
+}
+```
+- list.removeIf()  `nums.removeIf(n -> n<10);`
+## removeX
+这个 `n -> f(n)`，是可以写一个函数的。例如：
+
+```java
+public List<String> noX(List<String> strings) {
+  strings.replaceAll(n -> removeX(n));
+  return strings;
+}
+public String removeX(String s){
+  String r = "";
+  for(int i = 0; i<s.length(); i++){
+    if(s.charAt(i)!='x')
+      r+=s.charAt(i);
+  }
+  return r;
+}
+```
