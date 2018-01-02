@@ -145,3 +145,13 @@ public String removeX(String s){
   return r;
 }
 ```
+# String-3
+## countYZ
+
+Given a string, count the number of words ending in 'y' or 'z' -- so the 'y' in "heavy" and the 'z' in "fez" count, but not the 'y' in "yellow" (not case sensitive). We'll say that a y or z is at the end of a word if there is not an alphabetic letter immediately following it. (Note: Character.isLetter(char) tests if a char is an alphabetic letter.)
+countYZ("fez day") → 2
+countYZ("day fez") → 2
+countYZ("day fyyyz") → 2
+
+- 最开始的思路是找到所有非字母的，check它之前是否为y、z；但未通过other tests。
+- 用题目名搜了google，经过提示发现可以换一种思路：找到所有为y、z的，check它后面是否为非字母，完全正确。
