@@ -6,8 +6,8 @@
 - map1,map2 @done(2018-01-01)
 - functional 1 @done(2018-01-01)
 - string2 @done(2018-01-01)
-- string3
-- functional2
+- string3 @done(2018-01-03)
+- functional2 @done(2018-01-02)
 - array2
 - array3
 - ap1
@@ -155,3 +155,13 @@ countYZ("day fyyyz") → 2
 
 - 最开始的思路是找到所有非字母的，check它之前是否为y、z；但未通过other tests。
 - 用题目名搜了google，经过提示发现可以换一种思路：找到所有为y、z的，check它后面是否为非字母，完全正确。
+## 剩余的一些函数
+```java
+Character.isLetter(char); //是否是字符
+Character.isDigit(char); //是否是数字
+String.valueOf(int/boolean); //数字->string
+Integer.parseInt(String); //string->数字
+```
+# Functional-2
+## noNeg
+- nums.removeIf(n -> 条件);
