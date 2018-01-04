@@ -1,27 +1,41 @@
 public class Test{
-public static int countYZ(String str) {
-  int count = 0;
-  for(int i = 0; i<str.length(); i++){
-    if(ifyz(str.charAt(i))){
-      if(i==str.length()-1)
-        count++;
-      else{
-        if(i>=1 && !Character.isLetter(str.charAt(i-1)))
-        count++;
-      }
+public static String notReplace(String str) {
+  int start = 0;
+  int found;
+  String r = "";
+  while(start<str.length()){
+    found = str.indexOf("is",start);
+    if(found!=-1){
+      if(check(str,found))
+        r = r+str.substring(start,found)+"is not";
+      else
+        r =  r+str.substring(start,found+2);
+      start = found+2;
+
+    }
+    else{
+      r = r+str.substring(start);
+      break;
     }
   }
-  return count;
+  return r;
 }
 
-public static boolean ifyz(char x){
-  if( x== 'y' ||x== 'z' || x == 'Y' ||x == 'Z')
-    return true;
-  else 
-    return false;
+public static boolean check(String str, int found){
+  boolean left, right;
+  if(found==0 || (found>=1 && !Character.isLetter(str.charAt(found-1))))
+    left = true;
+  else
+    left = false;
+    
+  if(found+1==str.length()-1 || (found+1<=str.length()-1 && !Character.isLetter(str.charAt(found+2))))
+    right = true;
+  else
+    right = false;
+  return right&&left;
 }
     
-    public static void main(String[] args){
-        System.out.println(countYZ(""));
+public static void main(String[] args){
+      System.out.println(notReplace("Dis is bliss is"));
         }
     }
