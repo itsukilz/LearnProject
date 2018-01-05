@@ -8,8 +8,8 @@
 - string2 @done(2018-01-01)
 - string3 @done(2018-01-03)
 - functional2 @done(2018-01-02)
-- array2
-- array3
+- array2 @done(2018-01-04)
+- array3 @done(2018-01-05)
 - ap1
 - recursion1
 - recursion2
@@ -165,3 +165,43 @@ Integer.parseInt(String); //string->数字
 # Functional-2
 ## noNeg
 - nums.removeIf(n -> 条件);
+# Array-3
+## maxMirror
+
+We'll say that a "mirror" section in an array is a group of contiguous elements such that somewhere in the array, the same group appears in reverse order. For example, the largest mirror section in {1, 2, 3, 8, 9, 3, 2, 1} is length 3 (the {1, 2, 3} part). Return the size of the largest mirror section found in the given array.
+
+
+maxMirror([1, 2, 3, 8, 9, 3, 2, 1]) → 3
+maxMirror([1, 2, 1, 4]) → 3
+maxMirror([7, 1, 2, 9, 7, 2, 1]) → 2
+
+这应该是整个array-3中最难的一题了。
+- 我最开始的思路是将子数组作为整体去check，那么对于每一个size为n的数组，我要顺着找一遍，逆着找一遍，还得不断check两个子数组是否相等，demo写出来非常复杂。
+- 搜了一下别人的思路：顺着对于每一个可能的子数组起点start，我先逆着去找reverse数组的起点reverseStart，确定好了两个起点，再往中间去数，有多少个能重合，记录最大的重合数。这个思路实现起来就方便很多；
+```java
+public int maxMirror(int[] nums) {
+ int len = nums.length;
+  int count = 0;
+  int max = 0;
+  int i,j;
+  for(int start = 0; start<len; start++){
+    for(int reverseStart = len-1; reverseStart >= 0; reverseStart--){
+      if(nums[start] == nums[reverseStart]){
+        i = start;
+        j = reverseStart;
+
+        while(i<len && j>=0 &&nums[i]==nums[j]){
+          count++;
+          i++;
+          j--;
+        }
+        max = Math.max(max,count);
+        count = 0;
+      }
+    }
+  }
+  return max;
+  
+}
+
+```
