@@ -1,41 +1,32 @@
 public class Test{
-public static String notReplace(String str) {
-  int start = 0;
-  int found;
-  String r = "";
-  while(start<str.length()){
-    found = str.indexOf("is",start);
-    if(found!=-1){
-      if(check(str,found))
-        r = r+str.substring(start,found)+"is not";
-      else
-        r =  r+str.substring(start,found+2);
-      start = found+2;
+public static int maxMirror(int[] nums) {
+  int len = nums.length;
+  int count = 0;
+  int max = 0;
+  int i,j;
+  for(int start = 0; start<len; start++){
+    for(int reverseStart = len-1; reverseStart >= 0; reverseStart--){
+      if(nums[start] == nums[reverseStart]){
+        i = start;
+        j = reverseStart;
 
-    }
-    else{
-      r = r+str.substring(start);
-      break;
+        while(i<len && j>=0 &&nums[i]==nums[j]){
+          count++;
+          i++;
+          j--;
+        }
+        max = Math.max(max,count);
+        count = 0;
+      }
     }
   }
-  return r;
+  return max;
+  
 }
 
-public static boolean check(String str, int found){
-  boolean left, right;
-  if(found==0 || (found>=1 && !Character.isLetter(str.charAt(found-1))))
-    left = true;
-  else
-    left = false;
-    
-  if(found+1==str.length()-1 || (found+1<=str.length()-1 && !Character.isLetter(str.charAt(found+2))))
-    right = true;
-  else
-    right = false;
-  return right&&left;
-}
     
 public static void main(String[] args){
-      System.out.println(notReplace("Dis is bliss is"));
+  int[] k = new int[]{1, 2, 3, 8, 9, 3, 2, 1};
+      System.out.println(maxMirror(k));
         }
     }
