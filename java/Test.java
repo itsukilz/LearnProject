@@ -1,32 +1,26 @@
 public class Test{
-public static int maxMirror(int[] nums) {
-  int len = nums.length;
-  int count = 0;
-  int max = 0;
-  int i,j;
-  for(int start = 0; start<len; start++){
-    for(int reverseStart = len-1; reverseStart >= 0; reverseStart--){
-      if(nums[start] == nums[reverseStart]){
-        i = start;
-        j = reverseStart;
-
-        while(i<len && j>=0 &&nums[i]==nums[j]){
-          count++;
-          i++;
-          j--;
-        }
-        max = Math.max(max,count);
-        count = 0;
-      }
-    }
+public static boolean array220(int[] nums, int index) {
+  if(index < nums.length){
+    if(arrayfind(nums, nums[index])) return true;
+    else return array220(nums, index+1);
   }
-  return max;
-  
+  else return false;
 }
+
+
+public static boolean arrayfind(int[] nums, int find){
+  System.out.println(find);
+  for(int i : nums){
+    if(i==find*10)
+      return true;
+  }
+  return false;
+}
+
 
     
 public static void main(String[] args){
-  int[] k = new int[]{1, 2, 3, 8, 9, 3, 2, 1};
-      System.out.println(maxMirror(k));
-        }
-    }
+	int[] a = new int[]{20,2,21};
+  System.out.println(array220(a,0));
+}
+}
