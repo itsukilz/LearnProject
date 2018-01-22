@@ -205,3 +205,57 @@ public int maxMirror(int[] nums) {
 }
 
 ```
+# Recursion-1
+## 对递归的理解
+以前对递归的理解非常浅，只会fibonacci这种入门级简单的题目，经常搞不清楚怎么用递归的思路去分析一个问题——当然现在来看原因非常明显，就是练的少，遇到的少，于是思考的就少，一直就保持着糊里糊涂的状态。所以短时间内大量练习同一专题是非常有效的策略，codingjava这里的recursion非常棒。
+
+## 用递归去计算和/数
+- Given a non-negative int n, return the sum of its digits recursively (no loops). Note that mod (%) by 10 yields the rightmost digit (126 % 10 is 6), while divide (/) by 10 removes the rightmost digit (126 / 10 is 12).
+这是一个非常典型的例子，之前这种题目我都是转化为字符串用循环做，这回逼你用递归做：
+1. 第一步就是要去考虑，什么是base情况——很明显n为一位数的时候
+2. base情况的时候你要return什么——这需要看题目最后要计算什么，这里计算和，那么就return 一位数的n本身。
+3. 怎么不断的把当前n变为base状态——你怎么从n中分离base状态和非base状态。
+
+## 递归中需要更多判断
+
+- count8
+- Given a non-negative int n, compute recursively (no loops) the count of the occurrences of 8 as a digit, except that an 8 with another 8 immediately to its left counts double, so 8818 yields 4. Note that mod (%) by 10 yields the rightmost digit (126 % 10 is 6), while divide (/) by 10 removes the rightmost digit (126 / 10 is 12).
+
+count8(8) → 1
+count8(818) → 2
+count8(8818) → 4
+
+我之前卡在这道题目是因为我认为需要一个flag在递归的过程中标记前一个数是否是8，但我又不知道如何让flag在各层递归中传递。
+瞄了一眼别人的程序发现很简单，意识到自己思路上走进了死胡同，我可以直接判断前一个数是否为8，不需要flag。
+并且一定要有个base状态，base状态的return一定是一个数，不再继续递归了。
+
+```java
+public int count8(int n) {
+  if (n<10) return n==8?1:0;
+  else if(n%10==8 && (n/10)%10==8) return 2+count8(n/10);
+  else if(n%10==8 && (n/10)%10!=8) return 1+count8(n/10);
+  else return count8(n/10);
+}
+
+```
+
+## 递归的起始是什么？
+- changePi 
+Given a string, compute recursively (no loops) a new string where all appearances of "pi" have been replaced by "3.14".
+
+
+changePi("xpix") → "x3.14x"
+changePi("pipi") → "3.143.14"
+changePi("pip") → "3.14p"
+
+- 本题要求把所有pi的地方都换成3.14.我一直卡住的原因是我认为需要逐个检查2位，但如果是pi就必须跳过这个2位。但只要换一种方式思考——起始是什么？起始是str所有的字符啊，我可以控制这个逻辑，让检查跳1位还是两位。
+
+```java
+public String changePi(String str) {
+  if(str.length()<2) return str;
+  else if(str.substring(0,2).equals("pi"))
+    return "3.14"+changePi(str.substring(2));
+  else
+    return str.substring(0,1)+changePi(str.substring(1));
+}
+```
