@@ -1,0 +1,198 @@
+# 进度.todo
+- Stack
+
+# Stack
+## Baseball Game 2018/1/21
+### Problem
+> You're now a baseball game point recorder.
+Given a list of strings, each string can be one of the 4 following types:
+Integer (one round's score): Directly represents the number of points you get in this round.
+"+" (one round's score): Represents that the points you get in this round are the sum of the last two valid round's points.
+"D" (one round's score): Represents that the points you get in this round are the doubled data of the last valid round's points.
+"C" (an operation, which isn't a round's score): Represents the last valid round's points you get were invalid and should be removed.
+Each round's operation is permanent and could have an impact on the round before and the round after.
+You need to return the sum of the points you could get in all the rounds.
+Example 1:
+Input: ["5","2","C","D","+"]
+Output: 30
+Explanation: 
+Round 1: You could get 5 points. The sum is: 5.
+Round 2: You could get 2 points. The sum is: 7.
+Operation 1: The round 2's data was invalid. The sum is: 5.  
+Round 3: You could get 10 points (the round 2's data has been removed). The sum is: 15.
+Round 4: You could get 5 + 10 = 15 points. The sum is: 30.
+Example 2:
+Input: ["5","-2","4","C","D","9","+","+"]
+Output: 27
+Explanation: 
+Round 1: You could get 5 points. The sum is: 5.
+Round 2: You could get -2 points. The sum is: 3.
+Round 3: You could get 4 points. The sum is: 7.
+Operation 1: The round 3's data is invalid. The sum is: 3.  
+Round 4: You could get -4 points (the round 3's data has been removed). The sum is: -1.
+Round 5: You could get 9 points. The sum is: 8.
+Round 6: You could get -4 + 9 = 5 points. The sum is 13.
+Round 7: You could get 9 + 5 = 14 points. The sum is 27.
+Note:
+The size of the input list will be between 1 and 1000.
+Every integer represented in the list will be between -30000 and 30000.
+### Analyze
+根据不同输入，执行不同操作。发现操作"C"会unvaild上一个score，所以可以考虑用stack来储存scores，c = pop。
+
+这是抽象层面的解决方案，落实到Python语言来讲，会发现python的list其实可以充当stack，所以不需要自己创建一个stack。
+```python
+scores = []
+#push
+scores.append(x)
+#pop, 注意pop是不返回的。
+scores.pop()
+#peek
+scores[-1]
+#size
+len(scores)
+#is_empty()
+len(scores)==0
+```
+
+最终的解决方案：
+```python
+
+class Solution(object):
+    def calPoints(self, ops):
+        """
+        :type ops: List[str]
+        :rtype: int
+        """
+        history = []
+        for op in ops:
+            if op == "C":
+                history.pop()
+            elif op == "D":
+                history.append(history[-1]*2)
+            elif op == "+":
+                history.append(history[-2]+history[-1])
+            else:
+                history.append(int(op))
+        return sum(history)
+                
+```
+### Point
+1. 最开始不熟悉leetcode怎么使用，现在知道了，重要写其中函数即可。
+2. 我对python其实比java熟悉，我只懂java语法方面的知识，不懂静态非静态，类之间怎么引用。所以后来还是用python来写。
+3. 在写的过程中意识到其实python我也有些生疏，其实算法本质是思想，python也有好的算法与数据结构的书，可以共同参考。重要的就是怎么利用思想去解决问题。
+## Next Greater Element I 2018/1/22
+### Problem
+You are given two arrays (without duplicates) nums1 and nums2 where nums1’s elements are subset of nums2. Find all the next greater numbers for nums1's elements in the corresponding places of nums2.
+
+The Next Greater Number of a number x in nums1 is the first greater number to its right in nums2. If it does not exist, output -1 for this number.
+
+Example 1:
+Input: nums1 = [4,1,2], nums2 = [1,3,4,2].
+Output: [-1,3,-1]
+Explanation:
+    For number 4 in the first array, you cannot find the next greater number for it in the second array, so output -1.
+    For number 1 in the first array, the next greater number for it in the second array is 3.
+    For number 2 in the first array, there is no next greater number for it in the second array, so output -1.
+Example 2:
+Input: nums1 = [2,4], nums2 = [1,2,3,4].
+Output: [3,-1]
+Explanation:
+    For number 2 in the first array, the next greater number for it in the second array is 3.
+    For number 4 in the first array, there is no next greater number for it in the second array, so output -1.
+Note:
+All elements in nums1 and nums2 are unique.
+The length of both nums1 and nums2 would not exceed 1000.
+### Analyze
+- 题意
+	输入两个数组,num1, num2，1是2的子集。需要输出num1中每个数在2右侧第一个比它大的数（next greater），如果没有则为-1.
+	例如：		
+	Input: nums1 = [4,1,2], nums2 = [1,3,4,2].
+	Output: [-1,3,-1]
+
+
+- 思考过程
+1. 暴力，对每个1中的数，都在num2中遍历去找。最坏情况是2是从大到小排的，那么时间复杂度是n*n。（可以有多种方式实现，用dic存储1中的数能够优化找1数的时间）
+2. 优化，思路1的问题在于每个数都要遍历一遍去找，是否可以实现只遍历一遍就找到所有数的next greater? 很快能想到以下的方法：
+```python
+	# convert findNums to dic
+	dic = {}
+	for i in findNums:
+		dic[i] = -1
+	# convert nums to stack
+	s = Stack()
+	for i in nums[::-1]:
+		s.push(i)
+
+	temp = []
+	while s.is_empty()==False:
+		pop = s.peek()
+		s.pop()
+		
+		if dic.get(pop,0)!=0:
+			if s.size()==0:
+				break
+			else:
+				peek = s.peek()
+				# check all temp
+				if len(temp)!=0:
+					deltemp = []
+					for i in temp:
+						if peek > i:
+							dic[i] = peek
+							deltemp.append(i)
+					for i in deltemp:
+						temp.remove(i)
+
+				if peek > pop:
+					dic[pop] = peek
+
+				else:
+					temp.append(pop)
+
+	result = []
+	for i in findNums: 
+		result.append(dic[i])
+	return result
+
+```
+可以看到我使用了一个stack去储存num2，用一个temp储存所有next <= i的i. deltemp的作用是如果check符合了，需要把这些符合的删掉。
+
+3. 仔细研究其他submission后，我突然意识到第二个思路没问题，但实现起来过于繁琐了，我在一个不需要stack的地方用了stack——num2， 在一个可以使用stack来简化的地方用了list，明显是没有真正理解stack只是拿它套用。
+	temp的目的是：对每个peek，遍历所有temp,删掉小于temp的。 可以用stack来做，删掉就直接pop()
+	为什么我之前没有用stack来做temp呢？因为思维有漏洞，我觉得可能会出现后进去的比先进去的大，所以我认为需要遍历list。但实际上按照我这么设计，如果后进去的比先进去的大，那它就不会进去，所以后进去的一定比先进去的小。所以是可以使用stack的。
+```python
+def nextGreaterElement(findNums, nums):
+	# convert findNums to dic
+	dic = {}
+	for i in findNums:
+		dic[i] = -1
+
+	temp = []
+	length = len(nums)
+	
+	for i in range(length):
+		pop = nums[i]
+		if dic.get(pop,0)!=0:
+			if i==length-1:
+				break
+			else:
+				peek = nums[i+1]
+				# check all temp
+				while temp and temp[-1] < peek:
+					dic[temp[-1]] = peek
+					temp.pop()
+				
+				if peek > pop:
+					dic[pop] = peek
+				else:
+					temp.append(pop)
+
+	result = []
+	for i in findNums: 
+		result.append(dic[i])
+	return result
+
+```
+### Point
+这道题目收获很多，一是自己作出了优化，更重要的是通过看别人的解答，意识到自己的漏洞，自己对stack的套用。什么时候你可以用stack，你可以按照一个方向去删除，删除的方向是进入的反方向。
+同时，python里完全不需要自己实现stack，list已经可以实现所有的stack操作。
