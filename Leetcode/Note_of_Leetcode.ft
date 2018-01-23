@@ -196,3 +196,107 @@ def nextGreaterElement(findNums, nums):
 ### Point
 这道题目收获很多，一是自己作出了优化，更重要的是通过看别人的解答，意识到自己的漏洞，自己对stack的套用。什么时候你可以用stack，你可以按照一个方向去删除，删除的方向是进入的反方向。
 同时，python里完全不需要自己实现stack，list已经可以实现所有的stack操作。
+## Min Stack 2018/1/23
+### Problem
+Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+push(x) -- Push element x onto stack.
+pop() -- Removes the element on top of the stack.
+top() -- Get the top element.
+getMin() -- Retrieve the minimum element in the stack.
+Example:
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin();   --> Returns -3.
+minStack.pop();
+minStack.top();      --> Returns 0.
+minStack.getMin();   --> Returns -2.
+
+### Analyze
+设计一个stack，支持push,pop,top,以及constant time获取当前stack中最小的数。很明显重点在于最后一个要求。
+思路是，计算最小值或者随时维护一个排序的话，是达不到constant time的，必须储存。很自然我需要把加入任何一个数后本stack的最小值保存起来，于是就想到用一个minimun stack来保存加入每个数后的最小值。
+```python
+class MinStack(object):
+
+    def __init__(self):
+        """
+        initialize your data structure here.
+        """
+        self.mainstack = []
+        self.minimum = []
+
+    def push(self, x):
+        """
+        :type x: int
+        :rtype: void
+        """
+        if len(self.minimum) == 0:
+            self.minimum.append(x)
+        else:
+            self.minimum.append(min(self.minimum[-1],x))
+        self.mainstack.append(x)
+
+    def pop(self):
+        """
+        :rtype: void
+        """
+        self.mainstack.pop()
+        self.minimum.pop()
+
+    def top(self):
+        """
+        :rtype: int
+        """
+        return self.mainstack[-1]
+
+    def getMin(self):
+        """
+        :rtype: int
+        """
+        return self.minimum[-1]
+
+```
+
+### Point
+思路正确，python如何写类不熟悉，后来才知道，数据本身是需要用self.来储存的。
+## ValidParentheses 2018/1/23
+### Problem
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+### Analyze
+很简单的一道题，用一个stack去储存所有左边的符号，遇到右边的符号就去匹配。匹配成功就pop，不成功就false。
+```python
+def isValid(s):
+    """
+    :type s: str
+    :rtype: bool
+    """
+    stack = []
+    for char in s:
+        if char in ["(","[","{"]:
+            stack.append(char)
+        else:
+            if len(stack) == 0:
+                return False
+            if char == ")" and stack[-1]=="(":
+                stack.pop()
+            elif char == "}" and stack[-1]=="{":
+                stack.pop()
+            elif char == "]" and stack[-1]=="[":
+                stack.pop()
+            else:
+                return False
+    if len(stack) != 0:
+        return False
+    return True
+
+if __name__ == '__main__':
+    print isValid("()[]{()}")
+    print isValid("[{}")
+
+```
+### Point
+是需要自己进行测试的，考虑几种情况，能帮助自己意识到哪里没考虑全。
