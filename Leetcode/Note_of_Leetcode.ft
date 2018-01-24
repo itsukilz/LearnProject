@@ -300,7 +300,6 @@ if __name__ == '__main__':
 ```
 ### Point
 是需要自己进行测试的，考虑几种情况，能帮助自己意识到哪里没考虑全。
-
 ## DailyTemperatures 2018/1/23
 ### Problem
 Given a list of daily temperatures, produce a list that, for each day in the input, tells you how many days you would have to wait until a warmer temperature. If there is no future day for which this is possible, put 0 instead.
@@ -335,7 +334,6 @@ class Solution(object):
             result.append(dic[i])
         return result
 ```
-
 ## Asteroid Collision_735 2018/1/23
 ### Problem
 We are given an array asteroids of integers representing asteroids in a row.
@@ -451,3 +449,74 @@ class Solution(object):
 
 ### Point
 情况有很多种，需要耐心一点。
+## Exclusive Time of Functions 2018/1/24
+### Problem
+Given the running logs of n functions that are executed in a nonpreemptive single threaded CPU, find the exclusive time of these functions.
+
+Each function has a unique id, start from 0 to n-1. A function may be called recursively or by another function.
+
+A log is a string has this format : function_id:start_or_end:timestamp. For example, "0:start:0" means function 0 starts from the very beginning of time 0. "0:end:0" means function 0 ends to the very end of time 0.
+
+Exclusive time of a function is defined as the time spent within this function, the time spent by calling other functions should not be considered as this function's exclusive time. You should return the exclusive time of each function sorted by their function id.
+
+Example 1:
+Input:
+n = 2
+logs = 
+["0:start:0",
+ "1:start:2",
+ "1:end:5",
+ "0:end:6"]
+Output:[3, 4]
+Explanation:
+Function 0 starts at time 0, then it executes 2 units of time and reaches the end of time 1. 
+Now function 0 calls function 1, function 1 starts at time 2, executes 4 units of time and end at time 5.
+Function 0 is running again at time 6, and also end at the time 6, thus executes 1 unit of time. 
+So function 0 totally execute 2 + 1 = 3 units of time, and function 1 totally execute 4 units of time.
+Note:
+Input logs will be sorted by timestamp, NOT log id.
+Your output should be sorted by function id, which means the 0th element of your output corresponds to the exclusive time of function 0.
+Two functions won't start or end at the same time.
+Functions could be called recursively, and will always end.
+1 <= n <= 100
+### Analyze
+这个题目需要正确理解题意——0开始，1开始，1结束，0结束，在1执行的时候0没有执行。如何做到这一点？
+摸索很久之后意识到，最简便的方法还是减，1函数stop后，1的时间加上，0减去1的时间。
+
+```python
+def exclusiveTime(n, logs):
+    """
+    :type n: int
+    :type logs: List[str]
+    :rtype: List[int]
+    """
+    dic = dict.fromkeys(range(n),0)
+    stack = []
+    for log in logs:
+        loglist = log.split(":")
+        logfunc = loglist[1]
+        logx = (int(loglist[0]),int(loglist[2]))
+        
+        if logfunc == "start":
+            stack.append(logx)
+
+        else:
+            peek = stack[-1]
+            print log, stack
+            dic[peek[0]] += logx[1]-peek[1]+1
+            stack.pop()
+            if len(stack)!=0:
+                dic[stack[-1][0]] -= logx[1]-peek[1]+1
+
+    result = []
+    for i in range(n):
+        result.append(dic[i])
+    return result
+
+if __name__ == '__main__':
+    print exclusiveTime(1,["0:start:0","0:start:2","0:end:5","0:start:6","0:end:6","0:end:7"])
+
+``` 
+### Point
+1. 技巧：如果有这个方法有太多情况需要写（if-else），自己模拟都模拟不过来，很可能方法错了。
+2. 心态：如果一会没想出来不要沮丧，这什么都不代表。多的是重新静下心来做很快就做出来的情况，所以不要放弃，可以休息一下，但不要心情不好。
