@@ -520,3 +520,83 @@ if __name__ == '__main__':
 ### Point
 1. 技巧：如果有这个方法有太多情况需要写（if-else），自己模拟都模拟不过来，很可能方法错了。
 2. 心态：如果一会没想出来不要沮丧，这什么都不代表。多的是重新静下心来做很快就做出来的情况，所以不要放弃，可以休息一下，但不要心情不好。
+## Next Greater Element II 2018/1/24
+### Problem
+Given a circular array (the next element of the last element is the first element of the array), print the Next Greater Number for every element. The Next Greater Number of a number x is the first greater number to its traversing-order next in the array, which means you could search circularly to find its next greater number. If it doesn't exist, output -1 for this number.
+
+Example 1:
+Input: [1,2,1]
+Output: [2,-1,2]
+Explanation: The first 1's next greater number is 2; 
+The number 2 can't find next greater number; 
+The second 1's next greater number needs to search circularly, which is also 2.
+Note: The length of given array won't exceed 10000.
+### Analyze
+本题是Next Greater Element I的进化，仍然是找右边第一个比它大的数，但可以把数组看作成一个环状，[1,2,1],最后一个1可以绕到数组开始去找。核心就是解决环状查找的问题。
+思路是这样的，把数组*2延长，就可以套用I的方法一直往后找，但找的时候需要限制一下，比这个数大len(nums)的就不能比较了。
+
+第一版是这么写的，有点繁琐，但很清晰：
+```python
+class Solution(object):
+    def nextGreaterElements(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        """
+        new = nums+nums
+        lnum = len(nums)
+
+
+        dic = dict.fromkeys(range(lnum),-1)
+        temp = []
+        for i in range(2*lnum-1):
+            now = new[i]
+            nex = new[i+1]
+
+            while temp and nex > new[temp[-1]] and i+1 < temp[-1]+lnum:
+                dic[temp[-1]] = nex
+                temp.pop()
+
+            if i < lnum:
+                if nex > now:
+                    dic[i] = nex
+                else:
+                    temp.append(i)
+
+        result = []
+        for i in range(lnum):
+            result.append(dic[i])
+        return result
+
+
+```
+
+但是第一版速度有点慢，看了其他人的程序发现我思路没问题，优化点在于不需要用dic，也不需要真的、实际上加倍数组。
+
+第二版程序，省下了两个遍历的时间。
+```python
+class Solution(object):
+    def nextGreaterElements(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        """
+        lnum = len(nums)
+        # 直接用result就行，不需要dic
+        temp, result = [], [-1]*lnum
+        for i in range(2*lnum-1):
+        # 直接用%来代替new=nums+nums
+            now = nums[i%lnum]
+            nex = nums[(i+1)%lnum]
+            while temp and nex > nums[temp[-1]] and i+1 < temp[-1]+lnum:
+                result[temp.pop()] = nex
+            if i < lnum:
+                if nex > now:
+                    result[i] = nex
+                else:
+                    temp.append(i)
+        return result
+
+```
+### Point
+最开始思路很复杂，比如对每个数生成一个stack啊。但印证了上一题的总结——复杂到你模拟都不好模拟的（换言之，你自己都想不清楚）估计都有问题。
