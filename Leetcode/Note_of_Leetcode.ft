@@ -600,3 +600,124 @@ class Solution(object):
 ```
 ### Point
 最开始思路很复杂，比如对每个数生成一个stack啊。但印证了上一题的总结——复杂到你模拟都不好模拟的（换言之，你自己都想不清楚）估计都有问题。
+
+## 132 Pattern 2018/1/25
+### Problem
+Given a sequence of n integers a1, a2, ..., an, a 132 pattern is a subsequence ai, aj, ak such that i < j < k and ai < ak < aj. Design an algorithm that takes a list of n numbers as input and checks whether there is a 132 pattern in the list.
+
+Note: n will be less than 15,000.
+
+Example 1:
+Input: [1, 2, 3, 4]
+
+Output: False
+
+Explanation: There is no 132 pattern in the sequence.
+Example 2:
+Input: [3, 1, 4, 2]
+
+Output: True
+
+Explanation: There is a 132 pattern in the sequence: [1, 4, 2].
+Example 3:
+Input: [-1, 3, 2, 0]
+
+Output: True
+
+Explanation: There are three 132 patterns in the sequence: [-1, 3, 2], [-1, 3, 0] and [-1, 2, 0].
+### Analyze
+给一列数，要求判断数组中是否存在132pattern，即i<j<k, a[i]<a[k]<a[j].
+
+1. 这道题目想了很久，后来还是联系“以前有没有遇到类似的题目”才灵光一现——我可以把3作为我的中心，得到3之前最小的数1，再找3之后有没有比3小但大于1的数。
+
+```python
+class Solution(object):
+    def find132pattern(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+        	# find the minimum on the left side
+        length = len(nums)
+        smaller = []
+        stack = []
+        for i in range(1,length-1):
+            left = nums[i-1]
+            if len(smaller) == 0:
+                smaller.append(left)
+            else:
+                smaller.append(min(left,smaller[-1]))
+
+            now = nums[i]
+            nex = nums[i+1]
+            leftmin = smaller[i-1]
+            if nex < now and nex > leftmin:
+                return True
+            else:
+                for j in stack:
+                    if nex < nums[j] and nex > smaller[j-1]:
+                        return True
+                stack.append(i)
+
+        return False
+```
+2. 第一版思路超时了，因为对每个3要遍历一遍右边的数，时间复杂度O(n^2)。参考别人的思路发现其实可以把2作为我的中心，首先去看左边第一个比2大的数3，再找3之前最小的数是否比2大。
+	可以看到，右边第一个大的数，以及左边最小的数，其实都可以事先准备好。所以整体时间复杂度是O(n).
+```python
+    def find132pattern(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+        length = len(nums)
+        smaller,bigger = ["No"],["No"]*length
+        stack = []
+        for i in range(1,length):
+            left = nums[i-1]
+            if i==1:
+                smaller.append(left)
+            else:
+                smaller.append(min(left,smaller[-1]))
+        for i in range(length-1,1,-1):
+            now = nums[i]
+            left = nums[i-1]
+
+            while stack and left>nums[stack[-1]]:
+                bigger[stack[-1]] = i-1
+                stack.pop()
+            if left > now:
+                bigger[i] = i-1
+            else:
+                stack.append(i)
+
+        for i in range(2,length):
+            if bigger[i] != "No" and smaller[bigger[i]] != "No" and smaller[bigger[i]] < nums[i] :
+                return True
+        return False
+
+```
+### Point
+这道题想了非常久，中间一度陷入混乱的思考。事实上混乱的思考还不如不思考。启发式思考非常有用，从结果入手、联想以前类似的题，是我最终考虑出第一版解法的重要节点。
+现在回头看，第一版解法超时后，过渡到第二版解法很自然，但我一直想不到，因为我没有回溯根节点，132，我一直都是以3为中心思考的，1考虑后发现肯定不行，但没考虑过以2为中心。其实以2为中心比以3为中心要方便，因为2本身的性质是可以用的。
+## 402. Remove K Digits 2018/1/25
+### Problem
+Given a non-negative integer num represented as a string, remove k digits from the number so that the new number is the smallest possible.
+
+Note:
+The length of num is less than 10002 and will be ≥ k.
+The given num does not contain any leading zero.
+Example 1:
+
+Input: num = "1432219", k = 3
+Output: "1219"
+Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 which is the smallest.
+Example 2:
+
+Input: num = "10200", k = 1
+Output: "200"
+Explanation: Remove the leading 1 and the number is 200. Note that the output must not contain leading zeroes.
+Example 3:
+
+Input: num = "10", k = 2
+Output: "0"
+Explanation: Remove all the digits from the number and it is left with nothing which is 0.

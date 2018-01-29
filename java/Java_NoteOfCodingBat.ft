@@ -10,9 +10,9 @@
 - functional2 @done(2018-01-02)
 - array2 @done(2018-01-04)
 - array3 @done(2018-01-05)
-- ap1
-- recursion1
-- recursion2
+- ap1 @done(2018-01-25)
+- recursion1 @done(2018-01-25)
+- recursion2 @done(2018-01-25)
 # Warmup-1 
 ## notString
 - Given a string, return a new string where "not " has been added to the front. However, if the string already begins with "not", return the string unchanged. Note: use .equals() to compare 2 strings.
