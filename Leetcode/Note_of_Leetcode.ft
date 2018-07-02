@@ -600,7 +600,6 @@ class Solution(object):
 ```
 ### Point
 最开始思路很复杂，比如对每个数生成一个stack啊。但印证了上一题的总结——复杂到你模拟都不好模拟的（换言之，你自己都想不清楚）估计都有问题。
-
 ## 132 Pattern 2018/1/25
 ### Problem
 Given a sequence of n integers a1, a2, ..., an, a 132 pattern is a subsequence ai, aj, ak such that i < j < k and ai < ak < aj. Design an algorithm that takes a list of n numbers as input and checks whether there is a 132 pattern in the list.
@@ -699,7 +698,7 @@ class Solution(object):
 ### Point
 这道题想了非常久，中间一度陷入混乱的思考。事实上混乱的思考还不如不思考。启发式思考非常有用，从结果入手、联想以前类似的题，是我最终考虑出第一版解法的重要节点。
 现在回头看，第一版解法超时后，过渡到第二版解法很自然，但我一直想不到，因为我没有回溯根节点，132，我一直都是以3为中心思考的，1考虑后发现肯定不行，但没考虑过以2为中心。其实以2为中心比以3为中心要方便，因为2本身的性质是可以用的。
-## 402. Remove K Digits 2018/1/25
+## 402. Remove K Digits 2018/3/31
 ### Problem
 Given a non-negative integer num represented as a string, remove k digits from the number so that the new number is the smallest possible.
 
@@ -721,3 +720,11 @@ Example 3:
 Input: num = "10", k = 2
 Output: "0"
 Explanation: Remove all the digits from the number and it is left with nothing which is 0.
+
+### Analyze
+题意很好理解，n个数字组成的字符串，如何删掉k个数字，使得整个字符串代表的数字最小。
+大致方向：（1）暴力，遍历所有n-k个数字，找到最小的那个； （2）有一种判断删除数最小的策略。
+
+（1）我尝试过，但超时；（2）一直没有想出来，所以参考了别人的解题思路。
+
+> 

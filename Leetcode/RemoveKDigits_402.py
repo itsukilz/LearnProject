@@ -1,19 +1,21 @@
-from itertools import combinations
+
 
 def removeKdigits(num, k):
-	k = combinations(num, len(num)-k)
-	small = None
-	for i in k:
-		current = ""
-		for j in i:
-			current += j
-		num_current = int(current)
-		if small is None :
-			small = num_current
-		else:
-			if int(current) < small:
-				small = num_current
-	return small
+	if k == len(num):
+		return "0"
+	else:
+		removeOrder = []
+		outstring = ""
+		count = 0
+		while(count < k):
+			for i in range(len(num)-1):
+				if num[i] > num[i+1]:
+					num = removeK(num,i)
+					count += 1
+					continue
+		return num
+def removeK(num,i):
+	return num[:i] + num[i+1:]
 
 if __name__ == '__main__':
 	print removeKdigits("2354462",5)
